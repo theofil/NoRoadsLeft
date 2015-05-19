@@ -1,3 +1,3 @@
-# NoRoadLeft
+# NoRoadsLeft
 <br>
-git clone https://github.com/theofil/NoRoadLeft.git
+git clone https://github.com/theofil/NoRoadsLeft.git
