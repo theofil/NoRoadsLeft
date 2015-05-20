@@ -30,7 +30,7 @@ class SimpleCanvas
   string canName_;
   void Up(){if (nPanels_==2)can_up_->cd();}
   void Dw(){if (nPanels_==2)can_dw_->cd();}
-  void SetLogy(){if (nPanels_==2)can_up_->SetLogy(); if(nPanels_ == 1) can_->SetLogy();}
+  void SetLogy(){if (nPanels_==2)can_up_->SetLogy(); if(nPanels_ == 1) can_->SetLogz();}
   void Save()
   {
     can_->SaveAs((canName_+".pdf").c_str());
@@ -46,7 +46,7 @@ class SimpleCanvas
   void ShapeMeDw(TH1F*);
   void ShapeMeDw(TGraphAsymmErrors*);
   void ShapeMeUp(TH1F*);
-  void ShapeMe(TH1F*);
+  void ShapeMe(TH1*);
   void CMSPre(){can_up_->cd();pt1_->Draw("same");pt2_->Draw("same");pt3_->Draw("same");}
   void CMSSim(){can_up_->cd();st1_->Draw("same");st2_->Draw("same");}
   void CMSPhys14(){ if(nPanels_==2)can_up_->cd(); phys14_1_->Draw("same");phys14_2_->Draw("same");phys14_3_->Draw("same");}
@@ -61,19 +61,19 @@ void SimpleCanvas::SynchUpDw(TH1F* h1,TGraphAsymmErrors* h2)
   h2->GetXaxis()->SetLimits(xMin, xMax);
   h2->GetXaxis()->SetRangeUser(xMin, xMax);
 }
-void SimpleCanvas::ShapeMe(TH1F*hist)
+void SimpleCanvas::ShapeMe(TH1*hist)
 {
 
 //  hist->GetXaxis()->SetTitleFont(43);
 //  hist->GetXaxis()->SetTitleSize(28);
 //  hist->GetXaxis()->SetLabelFont(43);
 //  hist->GetXaxis()->SetLabelSize(26);
-  hist->GetXaxis()->SetTitleOffset(1.0);
+//  hist->GetXaxis()->SetTitleOffset(1.0);
 //  hist->GetYaxis()->SetTitleFont(43);
 //  hist->GetYaxis()->SetTitleSize(28);
 //  hist->GetYaxis()->SetLabelFont(43);
 //  hist->GetYaxis()->SetLabelSize(26);
-  hist->GetYaxis()->SetTitleOffset(1.0);
+  hist->GetYaxis()->SetTitleOffset(1.13);
 
 }
 
@@ -191,7 +191,9 @@ SimpleCanvas::SimpleCanvas(string canName, int nPanels)
   st3_->AddText("(8 TeV)");
 
   // --- define phys14_1,2,3
-  phys14_1_ = new TPaveText(0.129,0.921,0.258,1,"blNDC");
+  float pushToRight1 = 0.0;
+  float pushToRight2 = 0.03;
+  phys14_1_ = new TPaveText(0.129+pushToRight1,0.921,0.258+pushToRight1,1,"blNDC");
   phys14_1_->SetBorderSize(0);
   phys14_1_->SetFillColor(0);
   phys14_1_->SetFillStyle(0);
@@ -199,7 +201,7 @@ SimpleCanvas::SimpleCanvas(string canName, int nPanels)
   phys14_1_->SetTextSize(30);
   phys14_1_->AddText("CMS");
 
-  phys14_2_ = new TPaveText(0.26,0.93,0.51,1,"blNDC");
+  phys14_2_ = new TPaveText(0.26+pushToRight1,0.93,0.51+pushToRight1,1,"blNDC");
   phys14_2_->SetBorderSize(0);
   phys14_2_->SetFillColor(0);
   phys14_2_->SetFillStyle(0);
@@ -207,7 +209,7 @@ SimpleCanvas::SimpleCanvas(string canName, int nPanels)
   phys14_2_->SetTextSize(25);
   phys14_2_->AddText("Simulation");
 
-  phys14_3_ = new TPaveText(0.60,0.921,0.95,1,"blNDC");
+  phys14_3_ = new TPaveText(0.60+pushToRight2,0.921,0.95+pushToRight2,1,"blNDC");
   phys14_3_->SetBorderSize(0);
   phys14_3_->SetFillColor(0);
   phys14_3_->SetFillStyle(0);
@@ -232,13 +234,18 @@ SimpleCanvas::SimpleCanvas(string canName, int nPanels)
     can_dw_->SetBottomMargin(0.3);
     can_dw_->SetGridy();
     can_dw_->SetGridx();
+//    can_up_->SetLeftMargin(0.14);
+//    can_dw_->SetLeftMargin(0.14);
     can_up_->cd();
     title_->Draw("");
   }
 
   if(nPanels_ == 1)
   {
-    can_ = new TCanvas(canName_.c_str(), canName_.c_str());
+    can_ = new TCanvas(canName_.c_str(), canName_.c_str(), 500, 500);
+    can_->SetTopMargin(0.08);
+    can_->SetLeftMargin(0.14);
+    title_->Draw("");
   }
 }
 // --- end: Class SimpleCanvas
