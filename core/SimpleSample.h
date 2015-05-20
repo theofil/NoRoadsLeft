@@ -19,7 +19,7 @@ class SimpleSample
     fp_ = new TFile(filename.c_str(),"OPEN");
     events_ = (TTree*)fp_->Get("demo/events");
     maxN_ = events_->GetEntries();
-    if(title != "Data")tcut_ = tcut_*TCut( ("1000/"+any2string(maxN_)).c_str()); // 1 fb-1 normalization
+    if(title != "Data")tcut_ = tcut_*TCut( ("1./"+any2string(maxN_)).c_str()); // 1 fb-1 normalization
     if(tcut == TCut("0")) maxN_ = 0;
     if(fast) maxN_ = ULong64_t(0.01*maxN_);
 
