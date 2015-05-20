@@ -11,6 +11,18 @@ TCut sel_lep_iso("lepIso[0]<0.15 && lepIso[1]<0.15");
 TCut sel_M70110("l1l2M>70 && l1l2M<110");
 TCut sel_M0150("l1l2M<150");
 TCut sel_jetsMET8TeV("(njets == 2 && t1met > 150) || (njets >=3 && t1met > 100)");
+TCut sel_ej0("njets==0");
+TCut sel_ej1("njets==1");
+TCut sel_ej2("njets==2");
+TCut sel_ej3("njets==3");
+TCut sel_ej4("njets==4");
+TCut sel_ij0("njets>=0");
+TCut sel_ij1("njets>=1");
+TCut sel_ij2("njets>=2");
+TCut sel_ij3("njets>=3");
+TCut sel_ij4("njets>=4");
+
+TCut sel_FSSub("((lepID[0]*lepID[1] == -11*13) ? -1 : 0) + ((lepID[0]*lepID[1] == -11*11) ? 1 : 0) + ((lepID[0]*lepID[1] == -13*13) ? 1 : 0)");
 
 // events->SetAlias("jetHT","Sum$(jetPt)")
 

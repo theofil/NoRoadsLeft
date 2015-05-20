@@ -18,6 +18,7 @@ SimpleCanvas *simpleCan;
 SimpleDriver mcDriver, dataDriver;
 SimpleStack *hs_mc, *hs_data;
 TH2F        *h2_mc, *h2_data;
+TProfile    *pr_mc, *pr_data;
 
 void basicDataMCPlot(string title, SimpleStack *hs_data, SimpleStack *hs_mc, bool setLog = true , string legPos = "TR");
 void basicDataMCPlotFSSub(string title, SimpleStack *hs_data, SimpleStack *hs_mc, bool setLog = true , string legPos = "TR");
@@ -40,8 +41,9 @@ void runJZB()
   mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi          ,goFast, kWhite          )); 
   
   TCut mySelection = sel_basic && sel_CE && sel_SF;
-  TCut mySelectionFSSub = (sel_basic && sel_CE)*("((lepID[0]*lepID[1] == -11*13) ? -1 : 0) + ((lepID[0]*lepID[1] == -11*11) ? 1 : 0) + ((lepID[0]*lepID[1] == -13*13) ? 1 : 0)");
+  TCut mySelectionFSSub = (sel_basic && sel_CE)*sel_FSSub;
 
+/*
   hs_data = dataDriver.getSimpleStackTH1F("l1l2M", ";dilepton mass [GeV]; events / 5 GeV", 28, 20, 160, mySelection ); 
   hs_mc   = mcDriver.getSimpleStackTH1F  ("l1l2M", ";dilepton mass [GeV]; events / 5 GeV", 28, 20, 160, mySelection ); 
   basicDataMCPlot("l1l2M_basic_ce_sf", hs_data, hs_mc, true, "TR");
@@ -57,16 +59,20 @@ void runJZB()
   hs_data = dataDriver.getSimpleStackTH1F("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelectionFSSub ); 
   hs_mc   = mcDriver.getSimpleStackTH1F  ("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelectionFSSub ); 
   basicDataMCPlotFSSub("jzb_basic_CE_SF_FSSub", hs_data, hs_mc, false, "TL");
- 
-  h2_mc   = mcDriver.getHistoTH2F  ("l1l2Pt:l1l2M", ";dilepton mass [GeV];  dilepton p_{T} [GeV]", 28, 20, 160, 50, 0, 500, mySelectionFSSub); 
-  string title = "l1l2Pt_l1l2M_CE_SF_FSSub";
+*/
+
+  mySelectionFSSub = (sel_basic && sel_CE && sel_ij0)*sel_FSSub; 
+  h2_mc   = mcDriver.getHistoTH2F  ("t1vHT/l1l2Pt:l1l2Pt", ";dilepton pt [GeV]; jzb response", 50, 0, 500, 100, 0, 10, mySelectionFSSub); 
+  string title = "jzb_response_l1l2Pt_CE_SF_FSSub";
   cout << "basic 1 panel plot:"+title << endl;
   SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
   h2_mc->Draw("colz");
+  pr_mc = h2_mc->ProfileX(); pr_mc->Draw("e1");
   simpleCan->ShapeMe(h2_mc);
   simpleCan->SetLogy();
   simpleCan->CMSPhys14();
   simpleCan->Save(outputDir);
+
 }
 
 

@@ -53,7 +53,7 @@ class SimpleDriver: public std::vector<SimpleSample*>
 
     for(size_t sampleIt = 0; sampleIt < this->size(); ++sampleIt)
     {
-     string histName = var + "_h" + any2string(h1counter_) + "_" + getHash();
+     string histName = var + "_h_" + any2string(h1counter_) + "_" + getHash();
      h1_[h1counter_] = new TH1F(histName.c_str(), histTitle.c_str(), nBinsX, minX, maxX);
      h1_[h1counter_]->Sumw2();
      (*this)[sampleIt]->SetHistoStyle(h1_[h1counter_]); 
@@ -82,7 +82,7 @@ class SimpleDriver: public std::vector<SimpleSample*>
 
   TH2F * getHistoTH2F(string var, string histTitle, int nBinsX, float minX, float maxX, int nBinsY, float minY, float maxY, TCut myCut)
   {
-    string histName = var + "_h" + any2string(h1counter_) + "_" + getHash();
+    string histName = "h2_" + any2string(h2counter_) + "_" + getHash(var+any2string(nBinsX*(minX+maxX)*nBinsY*(minY+maxY))); 
     h2_[h2counter_] = new TH2F(histName.c_str(), histTitle.c_str(), nBinsX, minX, maxX, nBinsY, minY, maxY); 
     h2_[h2counter_]->Sumw2();
     h2counter_++;
@@ -143,6 +143,18 @@ class SimpleDriver: public std::vector<SimpleSample*>
     for(size_t sampleIt = 0; sampleIt < this->size(); ++sampleIt)
     {
       hash += (*this)[sampleIt]->title_ + (*this)[sampleIt]->tcut_ + (*this)[sampleIt]->filename_;
+    }
+    std::hash<std::string> str_hash;
+    hash = any2string(str_hash(hash));
+    return hash;
+  }
+
+  string getHash(string input)
+  {
+    string hash = "";
+    for(size_t sampleIt = 0; sampleIt < this->size(); ++sampleIt)
+    {
+      hash += (*this)[sampleIt]->title_ + (*this)[sampleIt]->tcut_ + (*this)[sampleIt]->filename_ + input;
     }
     std::hash<std::string> str_hash;
     hash = any2string(str_hash(hash));
