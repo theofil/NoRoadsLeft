@@ -21,10 +21,10 @@ SimpleStack *hs_mc, *hs_data;
 
 void basicDataMCPlot(string title, SimpleStack *hs_data, SimpleStack *hs_mc, bool setLog = true , string legPos = "TR");
 
+void makeControlPlots();
 
 void runJZB()
 {
-  outputDir = outputDir + "Phys14/explore/";
   setTDRStyle();
   gStyle->SetOptTitle(0);
   gStyle->SetErrorX(0.5);
@@ -32,11 +32,16 @@ void runJZB()
   dataDriver.push_back(new SimpleSample(fp_DYJetsToLL, "Data", TCut("0"), goFast));   // dummy file for pre-DATA period
 
   mcDriver.push_back(new SimpleSample(fp_ZZ4L          , "ZZ(4l)"        , xs_ZZ4L                                          ,goFast, kGray,      kGray));
-  mcDriver.push_back(new SimpleSample(fp_WZJetsTo3LNu  , "WZ"            , xs_WZJetsTo3LNu                                  ,goFast, kTeal,      kTeal));
-  mcDriver.push_back(new SimpleSample(fp_TTJets        , "t#bar{t}"      , xs_TTJets                                        ,goFast, kMagenta,   kMagenta)); 
-  mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#tau#tau)"  , TCut("isDYTauTau ? 1:0")*xs_DYJetsToLL           ,goFast, kRed,       kRed)); 
+  mcDriver.push_back(new SimpleSample(fp_WZJetsTo3LNu  , "WZ"            , xs_WZJetsTo3LNu                                  ,goFast, 32,            32));
+  mcDriver.push_back(new SimpleSample(fp_TTJets        , "t#bar{t}"      , xs_TTJets                                        ,goFast, 40,            40)); 
+  mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#tau#tau)"  , TCut("isDYTauTau ? 1:0")*xs_DYJetsToLL           ,goFast, 47,            47)); 
   mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL          ,goFast, kWhite          )); 
-  
+
+  makeControlPlots();
+}
+
+void makeControlPlots()
+{
   TCut mySelection = sel_basic && sel_CE && sel_SF;
 
   hs_data = dataDriver.getSimpleStackTH1F("l1l2M", ";dilepton mass [GeV]; events / 5 GeV", 28, 20, 160, mySelection ); 
@@ -51,7 +56,6 @@ void runJZB()
   hs_mc   = mcDriver.getSimpleStackTH1F  ("t1met", ";MET [GeV]; events / 10 GeV", 25, 0, 250, mySelection ); 
   basicDataMCPlot("t1met_basic_ce_sf", hs_data, hs_mc, true, "TR");
 }
-
 
 void basicDataMCPlot(string title, SimpleStack *hs_data, SimpleStack *hs_mc, bool setLog, string legPos)
 {
