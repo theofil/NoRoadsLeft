@@ -17,7 +17,7 @@
 class SimpleDriver: public std::vector<SimpleSample*>
 {
   public: 
-  SimpleDriver(){h1counter_ = 0; scounter_ = 0; h2counter_ = 0;}
+  SimpleDriver(){h1counter_ = 0; scounter_ = 0; h2counter_ = 0; pXcounter_ = 0;}
 
   SimpleStack * getSimpleStackTH1F(string var, string histTitle, int nBinsX, float minX, float maxX, TCut myCut)
   {
@@ -99,6 +99,26 @@ class SimpleDriver: public std::vector<SimpleSample*>
     THStack *hs_temp = getStackTH1F(var, histTitle, nBinsX, minX, maxX, myCut);
     return getHistoTH1F(hs_temp);
   }
+  //	TProfile(const char* name, const char* title, Int_t nbinsx, Double_t xlow, Double_t xup, Double_t ylow, Double_t yup, Option_t* option = "")
+
+  TProfile *getProfileX(string var, string histTitle, std::vector<float> xBins, TCut myCut)
+  {
+        Int_t nBins = xBins.size();
+        Float_t localXBins[nBins];
+
+        for(int i =0 ; i<nBins; i++) localXBins[i] = xBins[i];
+        string histName = "pX_" + any2string(pXcounter_) + "_" + getHash(var+any2string(nBins)); 
+	pX_[pXcounter_] = new TProfile(histName.c_str(), histTitle.c_str(), nBins-1, localXBins);
+
+        pXcounter_++;
+  	for(size_t sampleIt = 0; sampleIt < this->size(); ++sampleIt)
+      	{
+	    string drawCommand = var + ">>+" + histName;
+	    (*this)[sampleIt]-> events_->Draw(drawCommand.c_str(),  myCut*(*this)[sampleIt]->tcut_, "goff", (*this)[sampleIt]->maxN_);
+	}
+	return  pX_[pXcounter_-1];
+  }
+
 
 
   void moveOverflowToLastBin(TH1* h1)
@@ -160,12 +180,15 @@ class SimpleDriver: public std::vector<SimpleSample*>
     hash = any2string(str_hash(hash));
     return hash;
   }
+
   SimpleStack *simple_stacks_[30];
   THStack *stacks_[30];
-  TH1F *h1_[100];
-  TH2F *h2_[100];
+  TH1F *h1_[50];
+  TH2F *h2_[50];
+  TProfile *pX_[50];
   int scounter_ ;
   int h1counter_ ;
   int h2counter_ ;
+  int pXcounter_ ;
 };
 #endif
