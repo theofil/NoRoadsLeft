@@ -70,9 +70,13 @@ void response()
   sc1->SetLogy();
   sc1->CMSPhys14();
   sc1->Save(outputDir);
-  
+
+  pro[ij0_CE]->SetName("pro_ij0_CE");
+  pro[ij0_FW]->SetName("pro_ij0_FW");
   pro[ij0_CE]->Write();
   pro[ij0_FW]->Write();
+
+  sc1->can_->SetName("summary_ce_fw");
   sc1->can_->Write();
   // --- build second canvas 
   myBinsX[ij0] = {0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,100,200,500};
@@ -120,12 +124,20 @@ void response()
   sc2->CMSPhys14();
   sc2->Save(outputDir);
 
+  pro[ij0]->SetName("pro_ij0");
+  pro[ej0]->SetName("pro_ej0");
+  pro[ej1]->SetName("pro_ej1");
+  pro[ej2]->SetName("pro_ej2");
+  pro[ij3]->SetName("pro_ij3");
+
+
   pro[ij0]->Write();
   pro[ej0]->Write();
   pro[ej1]->Write();
   pro[ej2]->Write();
   pro[ij3]->Write();
 
+  sc2->can_->SetName("summary_njets");
   sc2->can_->Write();
   fpout->Write();
 }
