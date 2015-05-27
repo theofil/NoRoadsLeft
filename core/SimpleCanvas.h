@@ -30,7 +30,8 @@ class SimpleCanvas
   string canName_;
   void Up(){if (nPanels_==2)can_up_->cd();}
   void Dw(){if (nPanels_==2)can_dw_->cd();}
-  void SetLogy(){if (nPanels_==2)can_up_->SetLogy(); if(nPanels_ == 1) can_->SetLogz();}
+  void SetLogy(){if (nPanels_==2)can_up_->SetLogy(); if(nPanels_ == 1) can_->SetLogy();}
+  void SetLogz(){if (nPanels_==2)can_up_->SetLogz(); if(nPanels_ == 1) can_->SetLogz();}
   void Save()
   {
     can_->SaveAs((canName_+".pdf").c_str());

@@ -28,13 +28,15 @@ class SimpleDriver: public std::vector<SimpleSample*>
     for(size_t sampleIt = 0; sampleIt < this->size(); ++sampleIt)
     {
      string histName = var + "_h" + any2string(h1counter_) + "_" + getHash();
+     histName = "hash" + getHash(histName);
+     
      h1_[h1counter_] = new TH1F(histName.c_str(), histTitle.c_str(), nBinsX, minX, maxX);
      h1_[h1counter_]->Sumw2();
      (*this)[sampleIt]->SetHistoStyle(h1_[h1counter_]); 
      h1counter_++;
      string drawCommand = var + ">>" + histName;
      (*this)[sampleIt]-> events_->Draw(drawCommand.c_str(),  myCut*(*this)[sampleIt]->tcut_, "goff", (*this)[sampleIt]->maxN_);
-
+     
      moveOverflowToLastBin ( h1_[h1counter_-1] );
      moveUnderflowToLastBin( h1_[h1counter_-1] );
 

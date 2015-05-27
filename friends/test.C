@@ -134,7 +134,7 @@ bool isDYTauTau_;
 unsigned short nphos_;
 // --- end of ntuple variables
 
-void makejzb()
+void test()
 { 
   string filename_in = fp_DYJetsToLL;
   string filename_out = outputDir + "dy.aux.root";
