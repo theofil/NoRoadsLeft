@@ -49,7 +49,9 @@ TCut selection_bit[10];
 TCut selection_cjzb_cp[10];
 TCut selection_cjzb_cn[10];
 
-enum samples{ej2_CE_M81101} mySamples;
+enum samples{ej2_CE_M81101, ej2_CE_M81101_noFSsub, ij3_CE_M81101, ij3_CE_M81101_noFSsub} mySamples;
+
+void doij3();
 
 // --- tree variables
 #define njetsMax 30 
@@ -179,14 +181,15 @@ void makejzb()
 
   TCut Lumi("1000"); // 1000 pb-1
 
-  mcDriver.push_back(new SimpleSample(fp_ZZ4L          , "ZZ(4l)"        , xs_ZZ4L*Lumi                                          ,goFast, kGray,      kGray));
-  mcDriver.push_back(new SimpleSample(fp_WZJetsTo3LNu  , "WZ"            , xs_WZJetsTo3LNu*Lumi                                  ,goFast, 32,            32));
-  mcDriver.push_back(new SimpleSample(fp_TTJets        , "t#bar{t}"      , xs_TTJets*Lumi                                        ,goFast, 40,            40)); 
+//  mcDriver.push_back(new SimpleSample(fp_ZZ4L          , "ZZ(4l)"        , xs_ZZ4L*Lumi                                          ,goFast, kGray,      kGray));
+//  mcDriver.push_back(new SimpleSample(fp_WZJetsTo3LNu  , "WZ"            , xs_WZJetsTo3LNu*Lumi                                  ,goFast, 32,            32));
+//  mcDriver.push_back(new SimpleSample(fp_TTJets        , "t#bar{t}"      , xs_TTJets*Lumi                                        ,goFast, 40,            40)); 
   mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#tau#tau)"  , TCut("isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi           ,goFast, 47,            47)); 
   mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi          ,goFast, kWhite          )); 
 
   // needs as input a driver
   selection_bit[ej2_CE_M81101] = (sel_basic && sel_M81101 && sel_ej2 && sel_CE)*sel_FSSub;  
+  selection_bit[ej2_CE_M81101_noFSsub] = (sel_basic && sel_M81101 && sel_ej2 && sel_CE);  
 
   float xMinFit = -50;
   float xMaxFit = 50;
@@ -209,7 +212,7 @@ void makejzb()
   }  
 
   {
-    string title = "JZB_ej2_CE_M81101_rb";
+    string title = "JZB_ej2_CE_M81101_rb"; // re-binned
     SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
     h_jzb_rb[ej2_CE_M81101]->Draw("hist");
     simpleCan->CMSPhys14();
@@ -244,35 +247,60 @@ void makejzb()
   cout << "selection_cjzb_cp[ej2_CE_M81101] = " << selection_cjzb_cp[ej2_CE_M81101].GetTitle() << endl;
   cout << "selection_cjzb_cn[ej2_CE_M81101] = " << selection_cjzb_cn[ej2_CE_M81101].GetTitle() << endl;
 
-  s_cjzb_cp[ej2_CE_M81101] = mcDriver.getSimpleStackTH1F(abs_cjzb_var,";|JZB| [GeV]; events / 5 GeV;",60,0,300, selection_bit[ej2_CE_M81101] && selection_cjzb_cp[ej2_CE_M81101]);
+  // plot the JZB w/o FS subtraction
+  s_jzb[ej2_CE_M81101_noFSsub] = mcDriver.getSimpleStackTH1F("t1vHT - l1l2Pt",";JZB [GeV]; events / 10 GeV;",100,-500,500, selection_bit[ej2_CE_M81101_noFSsub]);
+  h_jzb[ej2_CE_M81101_noFSsub] = mcDriver.getHistoTH1F(s_jzb[ej2_CE_M81101_noFSsub]);
+  {
+    string title = "JZB_ej2_CE_M81101_noFSsub";
+    SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
+    h_jzb[ej2_CE_M81101_noFSsub]->Draw("hist");
+    s_jzb[ej2_CE_M81101_noFSsub]->Draw("hist same");
+    h_jzb[ej2_CE_M81101_noFSsub]->Draw("hist same");
+    h_jzb[ej2_CE_M81101_noFSsub]->Draw("axis same");
+    simpleCan->CMSPhys14();
+    simpleCan->SetLogy();
+    SimpleLegend *sleg = new SimpleLegend("TL");
+    sleg->FillLegend(s_jzb[ej2_CE_M81101_noFSsub]);
+    sleg->Draw("same");
+    simpleCan->Save(outputDir);
+  }  
+
+
+  // plot positive
+  s_cjzb_cp[ej2_CE_M81101] = mcDriver.getSimpleStackTH1F(abs_cjzb_var,";|JZB| [GeV]; events / 5 GeV;",60,0,300, 
+  (selection_bit[ej2_CE_M81101] && selection_cjzb_cp[ej2_CE_M81101])*sel_FSSub);
   h_cjzb_cp[ej2_CE_M81101] = mcDriver.getHistoTH1F(s_cjzb_cp[ej2_CE_M81101]);
   {
     string title = "JZB_ej2_CE_M81101_cjzb_cp";
     SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
-    h_cjzb_cp[ej2_CE_M81101]->Draw("hist");
-    s_cjzb_cp[ej2_CE_M81101]->Draw("hist same");
+    s_cjzb_cp[ej2_CE_M81101]->Draw("hist");
+    h_cjzb_cp[ej2_CE_M81101]->Draw("hist same");
+    h_cjzb_cp[ej2_CE_M81101]->Draw("axis same");
     simpleCan->CMSPhys14();
     simpleCan->SetLogy();
     SimpleLegend *sleg = new SimpleLegend("TR");
     sleg->FillLegend(s_cjzb_cp[ej2_CE_M81101]);
     sleg->Draw("same");
-    (new SimplePaveText("FS subtracted"))->Draw("same");
+    (new SimplePaveText("FS subtracted", 0.66, 0.33, 0.85, 0.53))->Draw("same");
     simpleCan->Save(outputDir);
   } 
 
-  s_cjzb_cn[ej2_CE_M81101] = mcDriver.getSimpleStackTH1F(abs_cjzb_var,";|JZB| [GeV]; events / 5 GeV;",60,0,300, selection_bit[ej2_CE_M81101] && selection_cjzb_cn[ej2_CE_M81101]);
+  // plot negative
+  s_cjzb_cn[ej2_CE_M81101] = mcDriver.getSimpleStackTH1F(abs_cjzb_var,";|JZB| [GeV]; events / 5 GeV;",60,0,300, 
+  (selection_bit[ej2_CE_M81101] && selection_cjzb_cn[ej2_CE_M81101])*sel_FSSub);
   h_cjzb_cn[ej2_CE_M81101] = mcDriver.getHistoTH1F(s_cjzb_cn[ej2_CE_M81101]);
   {
     string title = "JZB_ej2_CE_M81101_cjzb_cn";
     SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
-    h_cjzb_cn[ej2_CE_M81101]->Draw("hist");
-    s_cjzb_cn[ej2_CE_M81101]->Draw("hist same");
+    s_cjzb_cn[ej2_CE_M81101]->Draw("hist");
+    h_cjzb_cn[ej2_CE_M81101]->Draw("hist same");
+    h_cjzb_cn[ej2_CE_M81101]->Draw("axis same");
     simpleCan->CMSPhys14();
     simpleCan->SetLogy();
     SimpleLegend *sleg = new SimpleLegend("TR");
     sleg->FillLegend(s_cjzb_cn[ej2_CE_M81101]);
     sleg->Draw("same");
-    (new SimplePaveText("FS subtracted"))->Draw("same");
+    (new SimplePaveText("FS subtracted", 0.66, 0.33, 0.85, 0.53))->Draw("same");
     simpleCan->Save(outputDir);
   } 
 
@@ -299,6 +327,8 @@ void makejzb()
     hratio->GetYaxis()->SetNdivisions(507);
     simpleCan->Save(outputDir);
   }
+
+  doij3();// same as above but for Njets>=3
 /*
   string filename_in = fp_DYJetsToLL;
   string filename_out = outputDir + "dy.aux.root";
@@ -434,6 +464,151 @@ void makejzb()
   events_out->Write();
   fp_out->Close();
 */
+}
+
+void doij3()
+{
+  // needs as input a driver
+  selection_bit[ij3_CE_M81101] = (sel_basic && sel_M81101 && sel_ij3 && sel_CE)*sel_FSSub;  
+  selection_bit[ij3_CE_M81101_noFSsub] = (sel_basic && sel_M81101 && sel_ij3 && sel_CE);  
+
+  float xMinFit = -50;
+  float xMaxFit = 50;
+  s_jzb[ij3_CE_M81101] = mcDriver.getSimpleStackTH1F("t1vHT - l1l2Pt",";JZB [GeV]; events / GeV;",200,-100,100, selection_bit[ij3_CE_M81101]);
+  h_jzb[ij3_CE_M81101] = mcDriver.getHistoTH1F(s_jzb[ij3_CE_M81101]);
+  h_jzb_rb[ij3_CE_M81101] = (TH1F*)h_jzb[ij3_CE_M81101]->Clone(); autoRebin(h_jzb_rb[ij3_CE_M81101], 25);
+  f_jzb[ij3_CE_M81101] = new TF1("f_ij3_CE_M81101","gaus",-200,200);
+  f_jzb_core[ij3_CE_M81101] = new TF1("f_ij3_CE_M81101","gaus",xMinFit,xMaxFit);
+  {
+    string title = "JZB_ij3_CE_M81101";
+    SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
+    h_jzb[ij3_CE_M81101]->Draw("hist");
+    s_jzb[ij3_CE_M81101]->Draw("hist same");
+    simpleCan->CMSPhys14();
+    SimpleLegend *sleg = new SimpleLegend("TL");
+    sleg->FillLegend(s_jzb[ij3_CE_M81101]);
+    sleg->Draw("same");
+    (new SimplePaveText("FS subtracted"))->Draw("same");
+    simpleCan->Save(outputDir);
+  }  
+
+  {
+    string title = "JZB_ij3_CE_M81101_rb"; // re-binned
+    SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
+    h_jzb_rb[ij3_CE_M81101]->Draw("hist");
+    simpleCan->CMSPhys14();
+    SimpleLegend *sleg = new SimpleLegend("TL");
+    sleg->AddEntry(h_jzb_rb[ij3_CE_M81101],"MC","TL");
+    sleg->Draw("same");
+    (new SimplePaveText("FS subtracted"))->Draw("same");
+    h_jzb_rb[ij3_CE_M81101]->Fit(f_jzb[ij3_CE_M81101],"N0","",xMinFit,xMaxFit);
+    h_jzb_rb[ij3_CE_M81101]->Fit(f_jzb_core[ij3_CE_M81101],"N0","",xMinFit,xMaxFit);
+    f_jzb_core[ij3_CE_M81101]->SetLineColor(kRed);
+    f_jzb_core[ij3_CE_M81101]->SetLineWidth(2);
+    f_jzb[ij3_CE_M81101]->SetLineColor(kRed);
+    f_jzb[ij3_CE_M81101]->SetLineWidth(1);
+    f_jzb[ij3_CE_M81101]->SetLineStyle(3);
+    f_jzb[ij3_CE_M81101]->Draw("same");
+    f_jzb_core[ij3_CE_M81101]->Draw("same");
+    simpleCan->Save(outputDir);
+  }  
+
+  epsilon[ij3_CE_M81101] = pnumber(f_jzb_core[ij3_CE_M81101]->GetParameter(1), f_jzb_core[ij3_CE_M81101]->GetParError(1));
+  cout << "epsilon = " << epsilon[ij3_CE_M81101] << endl;
+  
+  string epsilon_str = any2string(epsilon[ij3_CE_M81101].x);
+  string cjzb_var = "t1vHT-l1l2Pt-" + epsilon_str;
+  string abs_cjzb_var = "abs(" + cjzb_var + ")";
+ 
+  selection_cjzb_cp[ij3_CE_M81101] = TCut((cjzb_var + ">0").c_str());
+  selection_cjzb_cn[ij3_CE_M81101] = TCut((cjzb_var + "<0").c_str());
+
+  cout << "cjzb_var = "      << cjzb_var      << endl;
+  cout << "abs_cjzb_var = " << abs_cjzb_var << endl; 
+  cout << "selection_cjzb_cp[ij3_CE_M81101] = " << selection_cjzb_cp[ij3_CE_M81101].GetTitle() << endl;
+  cout << "selection_cjzb_cn[ij3_CE_M81101] = " << selection_cjzb_cn[ij3_CE_M81101].GetTitle() << endl;
+
+  // plot the JZB w/o FS subtraction
+  s_jzb[ij3_CE_M81101_noFSsub] = mcDriver.getSimpleStackTH1F("t1vHT - l1l2Pt",";JZB [GeV]; events / 10 GeV;",100,-500,500, selection_bit[ij3_CE_M81101_noFSsub]);
+  h_jzb[ij3_CE_M81101_noFSsub] = mcDriver.getHistoTH1F(s_jzb[ij3_CE_M81101_noFSsub]);
+  {
+    string title = "JZB_ij3_CE_M81101_noFSsub";
+    SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
+    h_jzb[ij3_CE_M81101_noFSsub]->Draw("hist");
+    s_jzb[ij3_CE_M81101_noFSsub]->Draw("hist same");
+    h_jzb[ij3_CE_M81101_noFSsub]->Draw("hist same");
+    h_jzb[ij3_CE_M81101_noFSsub]->Draw("axis same");
+    simpleCan->CMSPhys14();
+    simpleCan->SetLogy();
+    SimpleLegend *sleg = new SimpleLegend("TL");
+    sleg->FillLegend(s_jzb[ij3_CE_M81101_noFSsub]);
+    sleg->Draw("same");
+    simpleCan->Save(outputDir);
+  }  
+
+
+  // plot positive
+  s_cjzb_cp[ij3_CE_M81101] = mcDriver.getSimpleStackTH1F(abs_cjzb_var,";|JZB| [GeV]; events / 5 GeV;",60,0,300, 
+  (selection_bit[ij3_CE_M81101] && selection_cjzb_cp[ij3_CE_M81101])*sel_FSSub);
+  h_cjzb_cp[ij3_CE_M81101] = mcDriver.getHistoTH1F(s_cjzb_cp[ij3_CE_M81101]);
+  {
+    string title = "JZB_ij3_CE_M81101_cjzb_cp";
+    SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
+    s_cjzb_cp[ij3_CE_M81101]->Draw("hist");
+    h_cjzb_cp[ij3_CE_M81101]->Draw("hist same");
+    h_cjzb_cp[ij3_CE_M81101]->Draw("axis same");
+    simpleCan->CMSPhys14();
+    simpleCan->SetLogy();
+    SimpleLegend *sleg = new SimpleLegend("TR");
+    sleg->FillLegend(s_cjzb_cp[ij3_CE_M81101]);
+    sleg->Draw("same");
+    (new SimplePaveText("FS subtracted", 0.66, 0.33, 0.85, 0.53))->Draw("same");
+    simpleCan->Save(outputDir);
+  } 
+
+  // plot negative
+  s_cjzb_cn[ij3_CE_M81101] = mcDriver.getSimpleStackTH1F(abs_cjzb_var,";|JZB| [GeV]; events / 5 GeV;",60,0,300, 
+  (selection_bit[ij3_CE_M81101] && selection_cjzb_cn[ij3_CE_M81101])*sel_FSSub);
+  h_cjzb_cn[ij3_CE_M81101] = mcDriver.getHistoTH1F(s_cjzb_cn[ij3_CE_M81101]);
+  {
+    string title = "JZB_ij3_CE_M81101_cjzb_cn";
+    SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
+    s_cjzb_cn[ij3_CE_M81101]->Draw("hist");
+    h_cjzb_cn[ij3_CE_M81101]->Draw("hist same");
+    h_cjzb_cn[ij3_CE_M81101]->Draw("axis same");
+    simpleCan->CMSPhys14();
+    simpleCan->SetLogy();
+    SimpleLegend *sleg = new SimpleLegend("TR");
+    sleg->FillLegend(s_cjzb_cn[ij3_CE_M81101]);
+    sleg->Draw("same");
+    (new SimplePaveText("FS subtracted", 0.66, 0.33, 0.85, 0.53))->Draw("same");
+    simpleCan->Save(outputDir);
+  } 
+
+  {
+    string title = "JZB_ij3_CE_M81101_cjzb_cp_cn";
+    SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 2);
+    simpleCan->ShapeMeUp(h_cjzb_cp[ij3_CE_M81101]);
+    simpleCan->ShapeMeUp(h_cjzb_cn[ij3_CE_M81101]);
+    h_cjzb_cp[ij3_CE_M81101]->Draw("hist");
+    h_cjzb_cn[ij3_CE_M81101]->Draw("hist same");
+    h_cjzb_cn[ij3_CE_M81101]->SetLineColor(kRed);
+    simpleCan->CMSPhys14();
+    simpleCan->SetLogy();
+    SimpleLegend *sleg = new SimpleLegend("TR");
+    sleg->AddEntry(h_cjzb_cp[ij3_CE_M81101],"JZB>0","FL");
+    sleg->AddEntry(h_cjzb_cn[ij3_CE_M81101],"JZB<0","FL");
+    sleg->Draw("same");
+    simpleCan->Dw();
+    TH1F *hratio = doRatio(h_cjzb_cp[ij3_CE_M81101], h_cjzb_cn[ij3_CE_M81101]);
+    simpleCan->ShapeMeDw(hratio);
+    hratio->GetYaxis()->SetTitle("ratio");
+    hratio->Draw("e1");
+    hratio->GetYaxis()->SetRangeUser(0.6,1.4);
+    hratio->GetYaxis()->SetNdivisions(507);
+    simpleCan->Save(outputDir);
+  }
+
 }
 
 void init()

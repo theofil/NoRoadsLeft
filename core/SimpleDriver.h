@@ -74,11 +74,12 @@ class SimpleDriver: public std::vector<SimpleSample*>
   TH1F *getHistoTH1F(THStack *hs)
   {
     TList *histos = hs->GetHists();
-    TH1F  *sum = (TH1F*) hs->GetStack()->First()->Clone("");
-    sum->Reset();
-    sum->Merge(histos);
-    sum->SetFillColor(kWhite);
-    sum->SetLineColor(kBlack);
+    TH1F  *sum = (TH1F*) hs->GetStack()->Last()->Clone("");
+//    sum->Reset();
+//    sum->Sumw2();
+//    sum->Merge(histos);
+//    sum->SetFillColor(kWhite);
+//    sum->SetLineColor(kBlack);
     return sum;
   }
 

@@ -8,7 +8,6 @@
 #include <map>
 #include <set>
 
-
 #include "TFile.h"
 #include "TLine.h"
 #include "TGraph.h"
@@ -54,6 +53,7 @@ float histIntegral(TH1F *hist, float minX){return hist->Integral(hist->FindBin(d
 float histIntegral(TH1F *hist, float minX, float maxX){return hist->Integral(hist->FindBin(double(minX)),hist->FindBin(double(maxX)));}
 float histIntegralAndError(TH1F *hist, float minX, float & error);
 float histIntegralAndError(TH1F *hist, float minX, float maxX, float & error); 
+pnumber histIntegralPN(TH1F*hist, float minX, float maxX);
 void  errorBand(TH1F* hist, float sysUncert = 1);
 TH1F *squareRootHist(TH1F*);
 float significance(float,float);
@@ -169,6 +169,14 @@ float histIntegralAndError(TH1F *hist, float minX, float maxX, float &error)
   return val;
 }
 
+pnumber histIntegralPN(TH1F*hist, float minX, float maxX)
+{
+  float integral      = 0.;
+  float integralError = 0.; 
+  integral  =  histIntegralAndError(hist, minX, maxX, integralError);
+  return pnumber(integral, integralError) ;
+}
+
 
 pnumber nEveW(TH1F* h1)
 { 
@@ -216,6 +224,24 @@ TH1F  *fractionalUncertTH1F(TH1F *hist) // changes a histogram to a fraction unc
       newHist->SetBinError(i,myBinError);
       newHist->SetBinContent(i,myBinContent);
     }
+  } 
+  return newHist;
+}
+
+TH1F  *ScaleTH1F(TH1F *hist, pnumber scale) 
+{
+  TH1F *newHist = (TH1F*)hist->Clone();
+
+  for(int i =0 ; i <= newHist->GetNbinsX()+1;i++)
+  {
+    float binContent = newHist->GetBinContent(i);
+    float binError  = newHist->GetBinError(i);
+   
+    pnumber newBinContent(binContent,binError);
+    newBinContent = newBinContent*scale; 
+ 
+    newHist->SetBinContent(i, newBinContent.x);
+    newHist->SetBinError  (i, newBinContent.xE);
   } 
   return newHist;
 }

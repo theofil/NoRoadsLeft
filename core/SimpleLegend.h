@@ -20,7 +20,7 @@ class SimpleLegend:public TLegend
 void SimpleLegend::SetStyle()
 {
   this->SetTextSize(24);
-  this->SetTextFont(63);
+  this->SetTextFont(43);
   this->SetFillColor(kWhite);
   this->SetFillStyle(0);
   this->SetBorderSize(0);
@@ -50,6 +50,63 @@ SimpleLegend::SimpleLegend(string position)
     this->SetX2NDC(0.5);
     this->SetY2NDC(0.9);
   }
+
+  if(position == "TRSF")
+  {
+    this->SetX1NDC(0.63);
+    this->SetY1NDC(0.48);
+    this->SetX2NDC(0.95);
+    this->SetY2NDC(0.90);
+  }
+
+  if(position == "TROF")
+  {
+    this->SetX1NDC(0.60);
+    this->SetY1NDC(0.48);
+    this->SetX2NDC(0.92);
+    this->SetY2NDC(0.90);
+  }
+
+  if(position == "TRSFjzb_pos")
+  {
+    this->SetX1NDC(0.63);
+    this->SetY1NDC(0.41);
+    this->SetX2NDC(0.95);
+    this->SetY2NDC(0.90);
+  }
+
+  if(position == "TROFjzb_pos")
+  {
+    this->SetX1NDC(0.60);
+    this->SetY1NDC(0.39);
+    this->SetX2NDC(0.91);
+    this->SetY2NDC(0.88);
+  }
+
+  if(position == "TRSFjzb_neg")
+  {
+    this->SetX1NDC(0.63);
+    this->SetY1NDC(0.41);
+    this->SetX2NDC(0.95);
+    this->SetY2NDC(0.90);
+  }
+
+  if(position == "TROFjzb_neg")
+  {
+    this->SetX1NDC(0.60);
+    this->SetY1NDC(0.39);
+    this->SetX2NDC(0.91);
+    this->SetY2NDC(0.88);
+  }
+
+  if(position == "jzb_exp_mode")
+  {
+    this->SetX1NDC(0.53);
+    this->SetY1NDC(0.68);
+    this->SetX2NDC(0.95);
+    this->SetY2NDC(0.90);
+  }
+
   SetStyle();
 }
 
