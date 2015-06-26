@@ -51,6 +51,23 @@ SimpleLegend::SimpleLegend(string position)
     this->SetY2NDC(0.9);
   }
 
+  if(position == "TLSF")
+  {
+    this->SetX1NDC(0.15);
+    this->SetY1NDC(0.48);
+    this->SetX2NDC(0.50);
+    this->SetY2NDC(0.90);
+  }
+
+  if(position == "TLOF")
+  {
+    this->SetX1NDC(0.15);
+    this->SetY1NDC(0.48);
+    this->SetX2NDC(0.50);
+    this->SetY2NDC(0.90);
+  }
+
+
   if(position == "TRSF")
   {
     this->SetX1NDC(0.63);

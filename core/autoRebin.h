@@ -16,7 +16,15 @@ void autoRebin(TH1F *&histo_in, float thresh = 25, vector<float> myBins = vector
 void autoRebin(TH1F *&h1,TH1F *&h2, float thresh = 25);
 TH1F *doRatio(TH1F *h1,TH1F *h2, float thresh = 25, bool addOverflowBin = true);
 TGraphAsymmErrors *doEffRatio(TH1F *h1,TH1F *h2, float thresh = 25);
+TH1F *doSimpleRatio(TH1F *h1,TH1F *h2);
 
+TH1F *doSimpleRatio(TH1F *h1,TH1F *h2)
+{
+  TH1F *h1_clone = (TH1F*)h1->Clone("");
+  TH1F *h2_clone = (TH1F*)h2->Clone("");
+  h1_clone->Divide(h2);
+  return h1_clone;
+}
 
 TGraphAsymmErrors *doEffRatio(TH1F *h1,TH1F *h2, float thresh)
 {
