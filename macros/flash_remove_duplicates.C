@@ -3,6 +3,8 @@ compile this puppy with
 
 g++ flash_remove_duplicates.C -o flash_remove_duplicates.exec `root-config --glibs --cflags`
 
+### original author: Marco-Andrea Buchmann
+
 */
 #include <iostream>
 #include <string>
@@ -28,19 +30,20 @@ class femtoEventTree
 {
 // this is for a binary tree
 // http://en.wikipedia.org/wiki/Binary_tree
-  int RunNum, lumi;
+  UInt_t RunNum;
+  UInt_t lumi;
   ULong64_t EventNum;
   femtoEventTree *Left, *Right;
   
-  int compare(int RunNum, ULong64_t EventNum, int lumi);//-1 if smaller, 0 if equal, 1 if larger
+  int compare(UInt_t RunNum, ULong64_t EventNum, UInt_t lumi);//-1 if smaller, 0 if equal, 1 if larger
   
   public:
-    bool insert(int RunNum, ULong64_t EventNum, int lumi);// 1: has been inserted, 0: was already there!
-    femtoEventTree(int RunNum, ULong64_t EventNum, int lumi);
+    bool insert(UInt_t RunNum, ULong64_t EventNum, UInt_t lumi);// 1: has been inserted, 0: was already there!
+    femtoEventTree(UInt_t RunNum, ULong64_t EventNum, UInt_t lumi);
     ~femtoEventTree();
 };
 
-int femtoEventTree::compare(int RunNum, ULong64_t EventNum,int lumi)
+int femtoEventTree::compare(UInt_t RunNum, ULong64_t EventNum,UInt_t lumi)
 {
   if (RunNum < this->RunNum) return -1;
   if (RunNum > this->RunNum) return 1;
@@ -54,7 +57,7 @@ int femtoEventTree::compare(int RunNum, ULong64_t EventNum,int lumi)
   return 0;
 }
 
-bool femtoEventTree::insert(int RunNum, ULong64_t EventNum, int lumi)
+bool femtoEventTree::insert(UInt_t RunNum, ULong64_t EventNum, UInt_t lumi)
 {
   int compare_result = compare(RunNum, EventNum,lumi);
   if (compare_result==0) return false;
@@ -73,7 +76,7 @@ bool femtoEventTree::insert(int RunNum, ULong64_t EventNum, int lumi)
     }
 }
 
-femtoEventTree::femtoEventTree(int RunNum, ULong64_t EventNum, int lumi)
+femtoEventTree::femtoEventTree(UInt_t RunNum, ULong64_t EventNum, UInt_t lumi)
 {
   this->RunNum=RunNum;
   this->EventNum=EventNum;
@@ -91,9 +94,9 @@ delete Left;
 
 struct femtoEvent
 {
-    unsigned long eventNum;
-    unsigned int runNum;
-    unsigned int lumi;
+    ULong64_t eventNum;
+    UInt_t runNum;
+    UInt_t lumi;
 } ;
 femtoEvent fEvent;
 
@@ -194,8 +197,9 @@ int main(int argc, char * argv[])
 	TTree* t1 = (TTree*)f1->Get("demo/events");
 	TTree* newTree = t1->CloneTree(0);
 	
-	unsigned int runNum,lumi;
-	unsigned long eventNum;
+	UInt_t runNum;
+        UInt_t lumi;
+	ULong64_t eventNum;
 	t1->SetBranchAddress("eventNum",&eventNum);
 	t1->SetBranchAddress("runNum",&runNum);
 	t1->SetBranchAddress("lumi",&lumi);
@@ -232,9 +236,11 @@ int main(int argc, char * argv[])
     }
     std::cout << std::endl;
     newTree->AutoSave();
-	cout << "We have found " << duplicates << " duplicates out of " << nentries << endl;
-	gSystem->Exec("rm allincluded.root");
-	
+    cout << "We have found " << duplicates << " duplicates out of " << nentries << endl; 
+    gSystem->Exec("rm allincluded.root");
+     
+    newFile->Close();
+
 	return 0;
 }
 
