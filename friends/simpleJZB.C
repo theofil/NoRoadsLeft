@@ -16,7 +16,7 @@ unsigned int totEvents;
 SimpleDriver mcDriver, dataDriver;
 
 using namespace std;
-bool goFast(false);
+bool goFast(true);
 
 
 void simpleJZB()
@@ -26,15 +26,15 @@ void simpleJZB()
   gStyle->SetOptTitle(0);
   gStyle->SetErrorX(0.5);
 
-  dataDriver.push_back(new SimpleSample(fp_DYJetsToLL, "Data", TCut("0"), goFast));   // dummy file for pre-DATA period
+  dataDriver.push_back(new SimpleSample(fp_Data, "Data", TCut("1"), goFast));   // dummy file for pre-DATA period
 
-  TCut Lumi("1000"); // 1000 pb-1
+  TCut Lumi("5.6"); // 1000 pb-1
 
-  mcDriver.push_back(new SimpleSample(fp_ZZ4L          , "ZZ(4l)"        , xs_ZZ4L*Lumi                                          ,goFast, kGray,      kGray));
-  mcDriver.push_back(new SimpleSample(fp_WZJetsTo3LNu  , "WZ"            , xs_WZJetsTo3LNu*Lumi                                  ,goFast, 32,            32));
+//  mcDriver.push_back(new SimpleSample(fp_ZZ4L          , "ZZ(4l)"        , xs_ZZ4L*Lumi                                          ,goFast, kGray,      kGray));
+//  mcDriver.push_back(new SimpleSample(fp_WZJetsTo3LNu  , "WZ"            , xs_WZJetsTo3LNu*Lumi                                  ,goFast, 32,            32));
   mcDriver.push_back(new SimpleSample(fp_TTJets        , "t#bar{t}"      , xs_TTJets*Lumi                                        ,goFast, 40,            40)); 
-  mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#tau#tau)"  , TCut("isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi           ,goFast, 47,            47)); 
-  mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi          ,goFast, kWhite          )); 
+  mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY(#tau#tau)"  , TCut("isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi*TCut("genWeightSign")  ,goFast, 47,            47)); 
+  mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi*TCut("genWeightSign") ,goFast, kWhite          )); 
 
   // needs to become a function
   TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF;
@@ -97,6 +97,7 @@ void simpleJZB()
       simpleCan_OF->Save(outputDir);
   }
 
+/*
   // --- plot JZB all
   {
       char SF_header[] = "Same Flavor";
@@ -340,7 +341,9 @@ void simpleJZB()
       
 
   }
+*/
 
 }
+
 
 
