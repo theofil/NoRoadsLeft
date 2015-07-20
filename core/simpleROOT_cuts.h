@@ -26,6 +26,17 @@ TCut sel_ij4("njets>=4");
 
 TCut sel_FSSub("((lepID[0]*lepID[1] == -11*13) ? -1 : 0) + ((lepID[0]*lepID[1] == -11*11) ? 1 : 0) + ((lepID[0]*lepID[1] == -13*13) ? 1 : 0)");
 
+TCut sel_ee_trig_fire("HLT_e1e2 == 1");
+TCut sel_mumu_trig_fire("HLT_mu1mu2 == 1");
+TCut sel_emu_trig_fire("HLT_mu1e2 == 1 || HLT_e1mu2 == 1");
+TCut sel_prescale_check("!(HLT_e1e2 > 1 || HLT_mu1mu2 > 1 || HLT_mu1e2 > 1 || HLT_e1mu2 > 1)"); // should be false if at least one of the diepton paths is zero
+
+TCut sel_ee_trig = sel_ee && sel_ee_trig_fire && sel_prescale_check;
+TCut sel_mumu_trig = sel_mumu && sel_mumu_trig_fire && sel_prescale_check;
+TCut sel_emu_trig = sel_emu && sel_emu_trig_fire && sel_prescale_check;
+TCut sel_SF_trig = sel_ee_trig || sel_mumu_trig;
+TCut sel_OF_trig = sel_emu_trig;
+
 // events->SetAlias("jetHT","Sum$(jetPt)")
 
 
