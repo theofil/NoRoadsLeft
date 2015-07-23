@@ -38,13 +38,13 @@ void simpleJZB()
   mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi ,goFast, kWhite , kRed+1         )); 
 
   // needs to become a function
-  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij1 && sel_CE && sel_SF_trig;
-  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij1 && sel_CE && sel_OF_trig;
+  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij3 && sel_CE && sel_SF_trig;
+  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij3 && sel_CE && sel_OF_trig;
   TCut sel_cut_jzb_pos = TCut("t1vHT-l1l2Pt>0");  
   TCut sel_cut_jzb_neg = TCut("t1vHT-l1l2Pt<0");  
   string metvar        = "t1met";
   string jzbvar        = "t1vHT-l1l2Pt";
-  string plotTitle     = "_ij1_CE_M81101";
+  string plotTitle     = "_ij3_CE_M81101";
   pnumber OF_scale     = pnumber(1, 0.05);
 
   cout << "..:: SimpleJZB log ::..." << endl;
@@ -476,12 +476,13 @@ void simpleJZB()
         simpleCan->Up();
         simpleCan->ShapeMeUp(sstack_data_SF_jzb_pos_hall); 
         simpleCan->ShapeMeUp(pred_all_data); 
-        sstack_data_SF_jzb_pos_hall->Draw("hist");
+        sstack_data_SF_jzb_pos_hall->Draw("e1");
         pred_all_data->Draw("hist same"); 
         sleg->SetHeader("Same Flavor [Data]");
         sleg->AddEntry(sstack_data_SF_jzb_pos_hall,"JZB > 0","FL");
         sleg->AddEntry(pred_all_data, "prediction", "FL");
         sleg->Draw("same");
+        sstack_data_SF_jzb_pos_hall->Draw("e1 same");
         simpleCan->Dw();
         TH1F *hratio = doRatio(sstack_data_SF_jzb_pos_hall, pred_all_data);
         hratio->GetYaxis()->SetTitle("ratio");
