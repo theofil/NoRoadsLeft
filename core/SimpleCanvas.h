@@ -48,8 +48,8 @@ class SimpleCanvas
   void ShapeMeDw(TGraphAsymmErrors*);
   void ShapeMeUp(TH1F*);
   void ShapeMe(TH1*);
-  void CMSPre(){can_up_->cd();pt1_->Draw("same");pt2_->Draw("same");pt3_->Draw("same");}
-  void CMSSim(){can_up_->cd();st1_->Draw("same");st2_->Draw("same");}
+  void CMSPre(){if(nPanels_==2)can_up_->cd(); pt1_->Draw("same");pt2_->Draw("same");pt3_->Draw("same");}
+  void CMSSim(){if(nPanels_==2)can_up_->cd();st1_->Draw("same");st2_->Draw("same");}
   void CMSPhys14(){ if(nPanels_==2)can_up_->cd(); phys14_1_->Draw("same");phys14_2_->Draw("same");phys14_3_->Draw("same");}
   void SynchUpDw(TH1F*,TGraphAsymmErrors*);
 };
@@ -164,7 +164,7 @@ SimpleCanvas::SimpleCanvas(string canName, int nPanels)
   pt3_->SetFillStyle(0);
   pt3_->SetTextFont(43);
   pt3_->SetTextSize(25);
-  pt3_->AddText("19.4 fb^{-1} (8 TeV)");
+  pt3_->AddText("56 pb^{-1} (13 TeV)");
 
   // --- define st1,2,3
   st1_ = new TPaveText(0.129,0.921,0.258,1,"blNDC");

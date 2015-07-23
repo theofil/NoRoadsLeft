@@ -44,6 +44,7 @@ void setTDRStyle() {
   tdrStyle->SetErrorX(0.);
   
   tdrStyle->SetMarkerStyle(20);
+  tdrStyle->SetMarkerSize(1.2)
 
   //For the fit/function:
   tdrStyle->SetOptFit(1);
