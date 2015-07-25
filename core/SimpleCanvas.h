@@ -164,7 +164,7 @@ SimpleCanvas::SimpleCanvas(string canName, int nPanels)
   pt3_->SetFillStyle(0);
   pt3_->SetTextFont(43);
   pt3_->SetTextSize(25);
-  pt3_->AddText("56 pb^{-1} (13 TeV)");
+  pt3_->AddText("40.2 pb^{-1} (13 TeV)");
 
   // --- define st1,2,3
   st1_ = new TPaveText(0.129,0.921,0.258,1,"blNDC");

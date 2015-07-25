@@ -28,7 +28,7 @@ void simpleJZB()
 
   dataDriver.push_back(new SimpleSample(fp_Data, "Data", TCut("1"), goFast));   // dummy file for pre-DATA period
 
-  TCut Lumi("55.93"); // 1000 pb-1
+  TCut Lumi("40.24"); // 1000 pb-1
   if(goFast) Lumi = Lumi*TCut("0.01");
   cout << "goFast = " << goFast << endl;
   cout << "Lumi = " << Lumi.GetTitle() << endl;
@@ -38,13 +38,13 @@ void simpleJZB()
   mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi ,goFast, kWhite , kRed+1         )); 
 
   // needs to become a function
-  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij3 && sel_CE && sel_SF_trig;
-  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij3 && sel_CE && sel_OF_trig;
+  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF_trig;
+  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_OF_trig;
   TCut sel_cut_jzb_pos = TCut("t1vHT-l1l2Pt>0");  
   TCut sel_cut_jzb_neg = TCut("t1vHT-l1l2Pt<0");  
   string metvar        = "t1met";
   string jzbvar        = "t1vHT-l1l2Pt";
-  string plotTitle     = "_ij3_CE_M81101";
+  string plotTitle     = "_ij2_CE_M81101";
   pnumber OF_scale     = pnumber(1, 0.05);
 
   cout << "..:: SimpleJZB log ::..." << endl;

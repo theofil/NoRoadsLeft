@@ -12,8 +12,8 @@ TTree *events_out;
 
 void makeAuxFile()
 { 
-  string filename_in = fp_DYJetsM50;
-  string filename_out = outputDir + "dym50.aux.root";
+  string filename_in = fp_ZZ;
+  string filename_out = outputDir + "ZZ.aux.root";
   bool hasNegWeights = true;
 
 //  string filename_in = fp_TTJets;
