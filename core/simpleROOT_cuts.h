@@ -24,6 +24,7 @@ TCut sel_ij2("njets>=2");
 TCut sel_ij3("njets>=3");
 TCut sel_ij4("njets>=4");
 
+
 TCut sel_FSSub("((lepID[0]*lepID[1] == -11*13) ? -1 : 0) + ((lepID[0]*lepID[1] == -11*11) ? 1 : 0) + ((lepID[0]*lepID[1] == -13*13) ? 1 : 0)");
 
 TCut sel_ee_trig_fire("HLT_e1e2 == 1");
@@ -37,6 +38,7 @@ TCut sel_emu_trig = sel_emu && sel_emu_trig_fire && sel_prescale_check;
 TCut sel_SF_trig = sel_ee_trig || sel_mumu_trig;
 TCut sel_OF_trig = sel_emu_trig;
 
+TCut sel_dileptontrigger_nleps2_ij2 = (sel_ee_trig || sel_mumu_trig || sel_emu_trig) && sel_ij2;
 // events->SetAlias("jetHT","Sum$(jetPt)")
 
 

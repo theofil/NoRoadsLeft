@@ -38,8 +38,8 @@ void simpleJZB()
   mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi ,goFast, kWhite , kRed+1         )); 
 
   // needs to become a function
-  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF_trig;
-  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_OF_trig;
+  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF_trig ;
+  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_OF_trig ;
   TCut sel_cut_jzb_pos = TCut("t1vHT-l1l2Pt>0");  
   TCut sel_cut_jzb_neg = TCut("t1vHT-l1l2Pt<0");  
   string metvar        = "t1met";

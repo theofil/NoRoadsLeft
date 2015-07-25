@@ -38,6 +38,7 @@
 #include "TRandom3.h"
 #include "TChain.h"
 #include "THStack.h"
+#include "TEntryList.h"
 
 #include "any2string.h"
 
