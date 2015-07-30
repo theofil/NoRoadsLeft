@@ -95,7 +95,9 @@ void makeAuxFile()
   
        if(!isData_) totEveW = NeffInv*genWeightSign ;
        if(isData_)  totEveW = 1.0 ;
-       init_test += totEveW;
+
+       if(!isData_) init_test += totEveW;
+       if(isData_)  init_test += 1/tot_entries;
   
        if(ii < 30) cout << setprecision(10)<< "genWeight_ =" << genWeight_ << " ; totEveW = " << totEveW << "; genWeight_/sumW = " << genWeight_/float(sumW) << endl;
        if(!isData_ && fabs(totEveW - genWeight_/float(sumW))>0.001) cout << "### genWeight_ =" << genWeight_ << " ; totEveW = " << totEveW << "; genWeight_/sumW = " << genWeight_/float(sumW) << endl;
@@ -104,6 +106,7 @@ void makeAuxFile()
     }
   
     cout << "init_test = " << init_test << endl;
+    if(fabs(init_test-1)>1.e-3) cout << "################################################# PROBLEM ######################################################## " << endl;
     cout << "writting the output file: " << filename_out << endl;
   
     fp_out->cd();
