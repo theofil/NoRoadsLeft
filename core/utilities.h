@@ -1,3 +1,6 @@
+#ifndef utilities_h
+#define utilities_h
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -44,8 +47,6 @@
 
 using namespace std;
 
-//template<class T> std::string any2string(T i){std::ostringstream buffer;    buffer << i;    return buffer.str();}
-//template<class T> std::string any2string2(T i){std::ostringstream buffer;    buffer << setprecision(3) << i;    return buffer.str();}
 float ratioError(float a,float b);
 float ratioError(float a,float b, float da , float db);
 float productError(float a,float b);
@@ -247,3 +248,4 @@ TH1F  *ScaleTH1F(TH1F *hist, pnumber scale)
   return newHist;
 }
 
+#endif

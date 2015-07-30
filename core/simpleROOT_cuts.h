@@ -1,7 +1,10 @@
+#ifndef simpleROOT_cuts_h
+#define simpleROOT_cuts_h
+
 TCut sel_ee("lepID[0]*lepID[1]==-11*11");
 TCut sel_mumu("lepID[0]*lepID[1]==-13*13");
 TCut sel_emu("lepID[0]*lepID[1]==-11*13");
-TCut sel_basic("lepPt[0]>25 && lepPt[1]>20 && l1l2DR>0.3 && !(abs(lepEta[0]) > 1.4 && abs(lepEta[0]) < 1.6) && !(abs(lepEta[1]) > 1.4 && abs(lepEta[1]) < 1.6)");
+TCut sel_basic("goodVtx && lepPt[0]>25 && lepPt[1]>20 && l1l2DR>0.3 && !(abs(lepEta[0]) > 1.4 && abs(lepEta[0]) < 1.6) && !(abs(lepEta[1]) > 1.4 && abs(lepEta[1]) < 1.6)");
 TCut sel_CE("abs(lepEta[0])<1.4 && abs(lepEta[1])<1.4");
 TCut sel_FW = sel_basic && !sel_CE;
 TCut sel_SF = sel_ee || sel_mumu;
@@ -77,3 +80,4 @@ TCut sel_recoMatchGen_e1("lepGenMatchIndex[0]!=-1 && genlepID[lepGenMatchIndex[0
 TCut sel_e2("abs(lepID[1]) == 11");
 TCut sel_gen_e2("abs(lepID[1]) == 11");
 TCut sel_recoMatchGen_e2("lepGenMatchIndex[1]!=-1 && genlepID[lepGenMatchIndex[1]] == lepID[1]");
+#endif

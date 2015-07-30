@@ -9,13 +9,12 @@
 #include "../core/CrossSections13TeV.h"
 #include "../core/LocalFilePath.h"
 #include "../core/SimplePaveText.h"
+#include "../example/v1_drivers.C"
 
-bool goFast(true);
-unsigned int totEvents;
+bool goFast(false);
 
 SimpleCanvas *simpleCan;
 
-SimpleDriver mcDriver, dataDriver;
 SimpleStack *hs_mc, *hs_data;
 TH2F        *h2_mc, *h2_data;
 
@@ -29,44 +28,22 @@ void example()
   gStyle->SetOptTitle(0);
   gStyle->SetErrorX(0.5);
 
-  dataDriver.push_back(new SimpleSample(fp_DYJetsToLL, "Data", TCut("0"), goFast));   // dummy file for pre-DATA period
-
-  TCut Lumi("1000"); // 1000 pb-1
-
-  mcDriver.push_back(new SimpleSample(fp_ZZ4L          , "ZZ(4l)"        , xs_ZZ4L*Lumi                                          ,goFast, kGray,      kGray));
-  mcDriver.push_back(new SimpleSample(fp_WZJetsTo3LNu  , "WZ"            , xs_WZJetsTo3LNu*Lumi                                  ,goFast, 32,            32));
-  mcDriver.push_back(new SimpleSample(fp_TTJets        , "t#bar{t}"      , xs_TTJets*Lumi                                        ,goFast, 40,            40)); 
-  mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#tau#tau)"  , TCut("isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi           ,goFast, 47,            47)); 
-  mcDriver.push_back(new SimpleSample(fp_DYJetsToLL    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi          ,goFast, kWhite          )); 
+  v1_drivers(goFast);
   
-  TCut mySelection = sel_basic && sel_CE && sel_SF;
-  TCut mySelectionFSSub = (sel_basic && sel_CE)*("((lepID[0]*lepID[1] == -11*13) ? -1 : 0) + ((lepID[0]*lepID[1] == -11*11) ? 1 : 0) + ((lepID[0]*lepID[1] == -13*13) ? 1 : 0)");
+  TCut mySelection_SF = sel_basic && sel_SF && sel_SF_trig;
 
-  hs_data = dataDriver.getSimpleStackTH1F("l1l2M", ";dilepton mass [GeV]; events / 5 GeV", 28, 20, 160, mySelection ); 
-  hs_mc   = mcDriver.getSimpleStackTH1F  ("l1l2M", ";dilepton mass [GeV]; events / 5 GeV", 28, 20, 160, mySelection ); 
-  basicDataMCPlot("l1l2M_basic_ce_sf", hs_data, hs_mc, true, "TR");
+  hs_data = dataDriver.getSimpleStackTH1F("met", ";MET [GeV]; events / 10 GeV", 35, 0, 350, mySelection_SF ); 
+  hs_mc   = mcDriver.getSimpleStackTH1F  ("met", ";MET [GeV]; events / 10 GeV", 35, 0, 350, mySelection_SF ); 
+  basicDataMCPlot("met_basic_SF", hs_data, hs_mc, true, "TR");
 
-  hs_data = dataDriver.getSimpleStackTH1F("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelection ); 
-  hs_mc   = mcDriver.getSimpleStackTH1F  ("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelection ); 
-  basicDataMCPlot("jzb_basic_ce_sf", hs_data, hs_mc, true, "TL");
+  hs_data = dataDriver.getSimpleStackTH1F("l1l2M", ";dilepton mass [GeV]; events / 5 GeV", 80, 20, 420, mySelection_SF ); 
+  hs_mc   = mcDriver.getSimpleStackTH1F  ("l1l2M", ";dilepton mass [GeV]; events / 5 GeV", 80, 20, 420, mySelection_SF ); 
+  basicDataMCPlot("l1l2M_basic_SF", hs_data, hs_mc, true, "TR");
 
-  hs_data = dataDriver.getSimpleStackTH1F("t1met", ";MET [GeV]; events / 10 GeV", 25, 0, 250, mySelection ); 
-  hs_mc   = mcDriver.getSimpleStackTH1F  ("t1met", ";MET [GeV]; events / 10 GeV", 25, 0, 250, mySelection ); 
-  basicDataMCPlot("t1met_basic_ce_sf", hs_data, hs_mc, true, "TR");
+  hs_data = dataDriver.getSimpleStackTH1F("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelection_SF ); 
+  hs_mc   = mcDriver.getSimpleStackTH1F  ("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelection_SF ); 
+  basicDataMCPlot("jzb_basic_SF", hs_data, hs_mc, true, "TL");
 
-  hs_data = dataDriver.getSimpleStackTH1F("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelectionFSSub ); 
-  hs_mc   = mcDriver.getSimpleStackTH1F  ("jzb", ";JZB [GeV]; events / 10 GeV", 60, -300, 300, mySelectionFSSub ); 
-  basicDataMCPlotFSSub("jzb_basic_CE_SF_FSSub", hs_data, hs_mc, false, "TL");
- 
-  h2_mc   = mcDriver.getHistoTH2F  ("l1l2Pt:l1l2M", ";dilepton mass [GeV];  dilepton p_{T} [GeV]", 28, 20, 160, 50, 0, 500, mySelectionFSSub); 
-  string title = "l1l2Pt_l1l2M_CE_SF_FSSub";
-  cout << "basic 1 panel plot:"+title << endl;
-  SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
-  h2_mc->Draw("colz");
-  simpleCan->ShapeMe(h2_mc);
-  simpleCan->SetLogy();
-  simpleCan->CMSPhys14();
-  simpleCan->Save(outputDir);
 }
 
 
@@ -77,54 +54,39 @@ void basicDataMCPlot(string title, SimpleStack *hs_data, SimpleStack *hs_mc, boo
   simpleCan->Up();
   TH1F *hall_mc   = mcDriver.getHistoTH1F(hs_mc);
   TH1F *hall_data = dataDriver.getHistoTH1F(hs_data);
+  simpleCan->ShapeMeUp(hall_data);
   simpleCan->ShapeMeUp(hall_mc);
-  hall_mc->Draw("hist");
+  hall_data->Draw("e1");
+  hall_mc->Draw("hist same");
   hs_mc  ->Draw("hist same");
   hall_mc->Draw("axis same");
   hall_mc->Draw("hist same");
   hs_data->Draw("same e1");
-  simpleCan->CMSPhys14();
+  simpleCan->CMSPre();
   if(setLog) simpleCan->SetLogy();
   SimpleLegend *sleg = new SimpleLegend(legPos.c_str());
   sleg->FillLegend(hs_data);
   sleg->FillLegend(hs_mc);
   sleg->Draw("same");
   simpleCan->Dw();
-  TH1F *hratio = doRatio(hall_mc, hall_mc);
+  TH1F *hratio = doRatio(hall_data, hall_mc);
   simpleCan->ShapeMeDw(hratio);
   hratio->GetYaxis()->SetTitle("Data / MC");
-  hratio->Draw("axis");
-  hratio->GetYaxis()->SetRangeUser(0.6,1.4);
+  hratio->Draw("e1");
+  hratio->GetYaxis()->SetRangeUser(0.0, 2.0);
   hratio->GetYaxis()->SetNdivisions(507);
   simpleCan->Save(outputDir);
 }
 
-void basicDataMCPlotFSSub(string title, SimpleStack *hs_data, SimpleStack *hs_mc, bool setLog, string legPos)
-{
-  cout << "basicDataMCPlot: "+title << endl;
-  SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 2);
-  simpleCan->Up();
-  TH1F *hall_mc   = mcDriver.getHistoTH1F(hs_mc);
-  TH1F *hall_data = dataDriver.getHistoTH1F(hs_data);
-  simpleCan->ShapeMeUp(hall_mc);
-  hall_mc->Draw("hist");
-  hs_mc  ->Draw("hist same");
-  hall_mc->Draw("axis same");
-  hall_mc->Draw("hist same");
-  hs_data->Draw("same e1");
+/*
+
+  h2_mc   = mcDriver.getHistoTH2F  ("l1l2Pt:l1l2M", ";dilepton mass [GeV];  dilepton p_{T} [GeV]", 28, 20, 160, 50, 0, 500, mySelection); 
+  string title = "l1l2Pt_l1l2M_CE_SF_FSSub";
+  cout << "basic 1 panel plot:"+title << endl;
+  SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 1);
+  h2_mc->Draw("colz");
+  simpleCan->ShapeMe(h2_mc);
+  simpleCan->SetLogy();
   simpleCan->CMSPhys14();
-  if(setLog) simpleCan->SetLogy();
-  SimpleLegend *sleg = new SimpleLegend(legPos.c_str());
-  sleg->FillLegend(hs_data);
-  sleg->FillLegend(hs_mc);
-  sleg->Draw("same");
-  (new SimplePaveText("FS subtracted"))->Draw("same");
-  simpleCan->Dw();
-  TH1F *hratio = doRatio(hall_mc, hall_mc);
-  simpleCan->ShapeMeDw(hratio);
-  hratio->GetYaxis()->SetTitle("Data / MC");
-  hratio->Draw("axis");
-  hratio->GetYaxis()->SetRangeUser(0.6,1.4);
-  hratio->GetYaxis()->SetNdivisions(507);
   simpleCan->Save(outputDir);
-}
+*/

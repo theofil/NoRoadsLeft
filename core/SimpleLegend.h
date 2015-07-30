@@ -38,7 +38,7 @@ SimpleLegend::SimpleLegend(string position)
 {
   if(position == "TR")
   {
-    this->SetX1NDC(0.65);
+    this->SetX1NDC(0.75);
     this->SetY1NDC(0.47);
     this->SetX2NDC(0.95);
     this->SetY2NDC(0.89);

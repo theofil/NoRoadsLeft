@@ -44,6 +44,8 @@ void makeSkims()
    // set branches that will take part in the event selection
    unsigned short nleps = 0;
    events_in->SetBranchAddress("nleps", &nleps);
+   unsigned short njets = 0;
+   events_in->SetBranchAddress("njets", &njets);
  
    //setting fp_out
    TFile * fp_out = new TFile(filename_out.c_str(), "RECREATE");
@@ -62,7 +64,7 @@ void makeSkims()
    {
       events_in->GetEntry(ii);
       events_friend->GetEntry(ii); // you definetly need this!
-      if(nleps>=2)events_out->Fill();
+      if(nleps==2 && njets==1)events_out->Fill();
    }
    
    events_out->AutoSave();
