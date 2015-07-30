@@ -9,6 +9,7 @@
 #include "TProfile.h"
 #include "THStack.h"
 #include "TCut.h"
+#include <stdlib.h>
 
 #ifndef SimpleDriver_h
 #define SimpleDriver_h
@@ -183,6 +184,33 @@ class SimpleDriver: public std::vector<SimpleSample*>
     hash = any2string(str_hash(hash));
     return hash;
   }
+
+  void setELS(string els_name)
+  {
+    for(size_t sampleIt = 0; sampleIt < this->size(); ++sampleIt)
+    {
+      string filename = (*this)[sampleIt]->filename_;
+      TTree  *myTTree = (*this)[sampleIt]->events_;
+
+      
+      int filenameSize = filename.size();
+      string elsPossiblePath = filename.substr(0,filenameSize-5) + ".els.root";
+      // "checking the existance of EntryList in: elsPossiblePath 
+      FileStat_t myfilestat;
+      bool auxFileExists = !gSystem->GetPathInfo(elsPossiblePath.c_str(), myfilestat) ;
+      if(auxFileExists){
+          cout <<"opening " << elsPossiblePath.c_str() << endl;
+          TFile *myELSFile = new TFile(elsPossiblePath.c_str(), "READ");
+          if(myELSFile == NULL){ cout << "myELSFile is a Zombie :-(" << endl; exit(0);}
+          TEntryList *myELS =  (TEntryList*)myELSFile->Get(els_name.c_str());
+          if(myELS == NULL) {cout << "myELS is a Zombie :-(" << endl;exit(0);}
+           
+          myTTree->SetEntryList(myELS);
+          //cout << "setting ELS: "<< els_name << " for " << filename << endl;  	
+          cout << "setting ELS: "<< els_name << " for " << (*this)[sampleIt]->title_ << endl;  	
+      }else{cout << elsPossiblePath.c_str() << " does not exists breaking here!" << endl; exit(0);}
+    }
+  }  
 
   SimpleStack *simple_stacks_[30];
   THStack *stacks_[30];

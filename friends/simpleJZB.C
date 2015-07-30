@@ -37,6 +37,11 @@ void simpleJZB()
   mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY(#tau#tau)"  , TCut("isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi  ,goFast, 47,            47)); 
   mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*xs_DYJetsToLL*Lumi ,goFast, kWhite , kRed+1         )); 
 
+
+  // set an entry list for going faster
+//  dataDriver.setELS("els_sel_dileptontrigger_nleps2_ij2");
+//  mcDriver.setELS  ("els_sel_dileptontrigger_nleps2_ij2");
+
   // needs to become a function
   TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF_trig ;
   TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_OF_trig ;
@@ -109,6 +114,7 @@ void simpleJZB()
       simpleCan_OF->Save(outputDir);
   }
 
+/*
   //----------------------------------------------------------------------
   //----------------------------------------------------------------------
   //----------------------------------------------------------------------
@@ -505,6 +511,7 @@ void simpleJZB()
       }
 
   }
+*/
 
 }
 

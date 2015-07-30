@@ -34,8 +34,9 @@ class SimpleSample
     }
 
     if(tcut == TCut("0")) maxN_ = 0; // that's special for the null trivial sample
-    if(title != "Data" && !auxFileExists)tcut_ = tcut_*TCut( ("1./"+any2string(maxN_)).c_str()); // if aux file doesn't exists use 1/maxN_ for the MC normalization
-    if(title != "Data" && auxFileExists)tcut_ = tcut_*TCut("totEveW"); // if aux file exists use multiply with totEveW (takes into account 1/Ntot, PU etc)
+    //if(title != "Data" && !auxFileExists)tcut_ = tcut_*TCut( ("1./"+any2string(maxN_)).c_str()); // if aux file doesn't exists use 1/maxN_ for the MC normalization
+    //if(title != "Data" && auxFileExists)tcut_ = tcut_*TCut("totEveW"); // if aux file exists use multiply with totEveW (takes into account 1/Ntot, PU etc)
+    if(title != "Data")tcut_ = tcut_*TCut("totEveW"); // if aux file exists use multiply with totEveW (takes into account 1/Ntot, PU etc)
 
     // --- set aliases
     events_->SetAlias("jzb","t1vHT-l1l2Pt");
