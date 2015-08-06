@@ -38,10 +38,11 @@ void v1_drivers(bool goFast)
     mcDriver.push_back(new SimpleSample(fp_DYJetsM1050  , "DY(#mu#mu,ee)" , TCut("!isDYTauTau ? 1:0")*Lumi  ,goFast, kWhite , kRed+1         )); 
 */
 
-    mcDriver.push_back(new SimpleSample(fp_TTJets       , "t#bar{t}"              , Lumi                           ,goFast, 40,                   40)); 
+//    mcDriver.push_back(new SimpleSample(fp_TTJets       , "t#bar{t}"              , Lumi                           ,goFast, 40,                   40)); 
 //    mcDriver.push_back(new SimpleSample(fp_WW2l2nu      , "WW"                    , Lumi                           ,goFast, 47,                   47)); 
 //    mcDriver.push_back(new SimpleSample(fp_WZ           , "WZ"                    , Lumi                           ,goFast, 37,                   37)); 
 //    mcDriver.push_back(new SimpleSample(fp_ZZ           , "ZZ"                    , Lumi                           ,goFast, kGray,             kGray)); 
 //    mcDriver.push_back(new SimpleSample(fp_DYJetsM1050  , "DY"                    , Lumi                           ,goFast, kWhite , kWhite        )); 
     mcDriver.push_back(new SimpleSample(fp_DYJetsM50    , "DY"                    , Lumi                           ,goFast, kWhite , kRed+1         )); 
+
 }

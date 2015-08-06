@@ -15,6 +15,7 @@ TCut sel_lep_iso("lepIso[0]<0.15 && lepIso[1]<0.15");
 TCut sel_M70110("l1l2M>70 && l1l2M<110");
 TCut sel_M81101("l1l2M>81 && l1l2M<101");
 TCut sel_M0150("l1l2M<150");
+TCut sel_M50("l1l2M>50");
 TCut sel_jetsMET8TeV("(njets == 2 && t1met > 150) || (njets >=3 && t1met > 100)");
 TCut sel_ej0("njets==0");
 TCut sel_ej1("njets==1");

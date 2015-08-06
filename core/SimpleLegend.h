@@ -124,6 +124,14 @@ SimpleLegend::SimpleLegend(string position)
     this->SetY2NDC(0.90);
   }
 
+  if(position == "TTR")
+  {
+    this->SetX1NDC(0.58);
+    this->SetY1NDC(0.77);
+    this->SetX2NDC(0.85);
+    this->SetY2NDC(0.92);
+  }
+
   SetStyle();
 }
 

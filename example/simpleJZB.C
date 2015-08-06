@@ -23,16 +23,21 @@ void simpleJZB()
   gStyle->SetErrorX(0.5);
 
   v1_drivers(goFast);
+  bool doJZBnorm(false);
 
   // needs to become a function
-  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij0 && sel_CE && sel_SF_trig ;
-  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij0 && sel_CE && sel_OF_trig ;
-  TCut sel_cut_jzb_pos = TCut("vHT-l1l2Pt>0");  
-  TCut sel_cut_jzb_neg = TCut("vHT-l1l2Pt<0");  
-  string metvar        = "met";
-  string jzbvar        = "vHT-l1l2Pt";
-  string plotTitle     = "_ij0_CE_M81101";
+  string v_met = "met";
+  string v_hr  = "vHT";
+  string plotTitle     = "_ij2_CE_M81101_"+v_met+"_"+v_hr;
+  TCut sel_cut_gauge   = TCut("!isDYTauTau") && TCut("vHT>0 && l1l2Pt>0 && jetPt[1]>50 ");
+  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF_trig && sel_cut_gauge;
+  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_OF_trig && sel_cut_gauge;
+  TCut sel_cut_jzb_pos = TCut((v_hr+"-l1l2Pt>0").c_str());  
+  TCut sel_cut_jzb_neg = TCut((v_hr+"-l1l2Pt<0").c_str());  
+  string metvar        = v_met.c_str();
+  string jzbvar        = (v_hr+"-l1l2Pt").c_str();
   pnumber OF_scale     = pnumber(1, 0.05);
+
 
   cout << "..:: SimpleJZB log ::..." << endl;
   cout << "sel_cut_SF = " << sel_cut_SF.GetTitle() << endl;
@@ -106,9 +111,9 @@ void simpleJZB()
       string title     = "";
        
       title = "jzb"+plotTitle+"_SF";
-      SimpleStack * sstack_data_SF    = dataDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 10 GeV;",60,-300,300, sel_cut_SF);
+      SimpleStack * sstack_data_SF    = dataDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 10 GeV;",40,-200,200, sel_cut_SF);
       TH1F *sstack_data_SF_hall       = dataDriver.getHistoTH1F(sstack_data_SF);	
-      SimpleStack * sstack_mc_SF    = mcDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 10 GeV;",60,-300,300, sel_cut_SF);
+      SimpleStack * sstack_mc_SF    = mcDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 10 GeV;",40,-200,200, sel_cut_SF);
       TH1F *sstack_mc_SF_hall       = mcDriver.getHistoTH1F(sstack_mc_SF);	
       SimpleLegend *sleg_SF = new SimpleLegend("TLSF");
       SimpleCanvas *simpleCan_SF = new SimpleCanvas(title.c_str(), 1);
@@ -127,9 +132,9 @@ void simpleJZB()
       simpleCan_SF->Save(outputDir);
 
       title = "jzb"+plotTitle+"_OF";
-      SimpleStack * sstack_data_OF    = dataDriver.getSimpleStackTH1F(jzbvar,";MET [GeV]; events / 10 GeV;",60,-300,300, sel_cut_OF);
+      SimpleStack * sstack_data_OF    = dataDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 10 GeV;",40,-200,200, sel_cut_OF);
       TH1F *sstack_data_OF_hall       = dataDriver.getHistoTH1F(sstack_data_OF);	
-      SimpleStack * sstack_mc_OF    = mcDriver.getSimpleStackTH1F(jzbvar,";MET [GeV]; events / 10 GeV;",60,-300,300, sel_cut_OF);
+      SimpleStack * sstack_mc_OF    = mcDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 10 GeV;",40,-200,200, sel_cut_OF);
       TH1F *sstack_mc_OF_hall       = mcDriver.getHistoTH1F(sstack_mc_OF);	
       SimpleLegend *sleg_OF = new SimpleLegend("TLOF");
       SimpleCanvas *simpleCan_OF = new SimpleCanvas(title.c_str(), 1);
@@ -255,6 +260,7 @@ void simpleJZB()
 
       pnumber jzb_norm_mc = (jzb_pos_0_50_mc_SF-jzb_pos_0_50_mc_OF)/(jzb_neg_0_50_mc_SF-jzb_neg_0_50_mc_OF);
       cout << "jzb_pos_0_50_mc_SF/jzb_neg_0_50_mc_SF = " << jzb_pos_0_50_mc_SF/jzb_neg_0_50_mc_SF << endl;
+      if(!doJZBnorm) jzb_norm_mc = pnumber(1,0);
       cout << "jzb_norm_mc = " << jzb_norm_mc << endl;
 
       vector<TH1F*> SF_jzb_pos_TH1F_vec_mc = sstack_mc_SF_jzb_pos->histoPointers_;
@@ -332,22 +338,24 @@ void simpleJZB()
       }
 
       {
+        TH1F *sstack_mc_SF_jzb_pos_hall_clone = (TH1F*)sstack_mc_SF_jzb_pos_hall->Clone();
+        sstack_mc_SF_jzb_pos_hall_clone->SetLineColor(kBlack);
   	title = metvar+plotTitle+"_pred_all_mc";  
   	SimpleLegend *sleg      = new SimpleLegend("jzb_exp_mode");
        	SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 2);
         simpleCan->CMSPre();
         simpleCan->SetLogy();
         simpleCan->Up();
-        simpleCan->ShapeMeUp(sstack_mc_SF_jzb_pos_hall); 
+        simpleCan->ShapeMeUp(sstack_mc_SF_jzb_pos_hall_clone); 
         simpleCan->ShapeMeUp(pred_all_mc); 
-        sstack_mc_SF_jzb_pos_hall->Draw("hist");
+        sstack_mc_SF_jzb_pos_hall_clone->Draw("hist");
         pred_all_mc->Draw("hist same"); 
         sleg->SetHeader("Same Flavor [MC]");
-        sleg->AddEntry(sstack_mc_SF_jzb_pos_hall,"JZB > 0","FL");
+        sleg->AddEntry(sstack_mc_SF_jzb_pos_hall_clone,"JZB > 0","FL");
         sleg->AddEntry(pred_all_mc, "prediction", "FL");
         sleg->Draw("same");
         simpleCan->Dw();
-        TH1F *hratio = doSimpleRatio(sstack_mc_SF_jzb_pos_hall, pred_all_mc);
+        TH1F *hratio = doSimpleRatio(sstack_mc_SF_jzb_pos_hall_clone, pred_all_mc);
         hratio->GetYaxis()->SetTitle("ratio");
         hratio->GetYaxis()->CenterTitle();
         simpleCan->ShapeMeDw(hratio);
@@ -357,11 +365,11 @@ void simpleJZB()
         simpleCan->Save(outputDir);
 
         // --- printout
-        pnumber obs_50_100 = histIntegralPN(sstack_mc_SF_jzb_pos_hall, 50, 100);
+        pnumber obs_50_100 = histIntegralPN(sstack_mc_SF_jzb_pos_hall_clone, 50, 100);
         pnumber pred_50_100 = histIntegralPN(pred_all_mc, 50, 100);
         cout << "mc: [50, 100] "<< "all" << " obs = " << obs_50_100 << " pred = " << pred_50_100 << " r = " << obs_50_100/pred_50_100 << endl;
 
-        pnumber obs_100_1000 = histIntegralPN(sstack_mc_SF_jzb_pos_hall, 100, 1000);
+        pnumber obs_100_1000 = histIntegralPN(sstack_mc_SF_jzb_pos_hall_clone, 100, 1000);
         pnumber pred_100_1000 = histIntegralPN(pred_all_mc, 100, 1000);
         cout << "mc: [100, 1000] "<< "all" << " obs = " << obs_100_1000 << " pred = " << pred_100_1000 << " r = " << obs_100_1000/pred_100_1000 <<  endl;
         // end:printout
@@ -378,6 +386,7 @@ void simpleJZB()
 
       pnumber jzb_norm_data = (jzb_pos_0_50_data_SF-jzb_pos_0_50_data_OF)/(jzb_neg_0_50_data_SF-jzb_neg_0_50_data_OF);
       cout << "jzb_pos_0_50_data_SF/jzb_neg_0_50_data_SF = " << jzb_pos_0_50_data_SF/jzb_neg_0_50_data_SF << endl;
+      if(!doJZBnorm)jzb_norm_data = pnumber(1,0);
       cout << "jzb_norm_data = " << jzb_norm_data << endl;
 
       vector<TH1F*> SF_jzb_pos_TH1F_vec_data = sstack_data_SF_jzb_pos->histoPointers_;
@@ -412,29 +421,29 @@ void simpleJZB()
         pred->SetLineWidth(2);
         pred->SetLineStyle(2);
 
-        title = metvar+plotTitle+"_data"+"_pred"+any2string(ii);  
-        SimpleLegend *sleg      = new SimpleLegend("jzb_exp_mode");
-        SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 2);
-        simpleCan->CMSPre();
-        simpleCan->SetLogy();
-        simpleCan->Up();
-        simpleCan->ShapeMeUp(SF_jzb_pos); 
-        simpleCan->ShapeMeUp(pred); 
-        SF_jzb_pos->Draw("hist");
-        pred->Draw("hist same"); 
-        sleg->SetHeader((sampleTitles_data[ii]+" [SF]").c_str());
-        sleg->AddEntry(SF_jzb_pos,"JZB > 0","FL");
-        sleg->AddEntry(pred, "prediction", "FL");
-        sleg->Draw("same");
-        simpleCan->Dw();
-        TH1F *hratio = doRatio(SF_jzb_pos, pred);
-        hratio->GetYaxis()->SetTitle("ratio");
-        hratio->GetYaxis()->CenterTitle();
-        simpleCan->ShapeMeDw(hratio);
-        hratio->Draw("e1");
-        hratio->GetYaxis()->SetRangeUser(0.0,2.0);
-        hratio->GetYaxis()->SetNdivisions(507);
-        simpleCan->Save(outputDir);
+//        title = metvar+plotTitle+"_data"+"_pred"+any2string(ii);  
+//        SimpleLegend *sleg      = new SimpleLegend("jzb_exp_mode");
+//        SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 2);
+//        simpleCan->CMSPre();
+//        simpleCan->SetLogy();
+//        simpleCan->Up();
+//        simpleCan->ShapeMeUp(SF_jzb_pos); 
+//        simpleCan->ShapeMeUp(pred); 
+//        SF_jzb_pos->Draw("hist");
+//        pred->Draw("hist same"); 
+//        sleg->SetHeader((sampleTitles_data[ii]+" [SF]").c_str());
+//        sleg->AddEntry(SF_jzb_pos,"JZB > 0","FL");
+//        sleg->AddEntry(pred, "prediction", "FL");
+//        sleg->Draw("same");
+//        simpleCan->Dw();
+//        TH1F *hratio = doRatio(SF_jzb_pos, pred);
+//        hratio->GetYaxis()->SetTitle("ratio");
+//        hratio->GetYaxis()->CenterTitle();
+//        simpleCan->ShapeMeDw(hratio);
+//        hratio->Draw("e1");
+//        hratio->GetYaxis()->SetRangeUser(0.0,2.0);
+//        hratio->GetYaxis()->SetNdivisions(507);
+//        simpleCan->Save(outputDir);
       }	
 
       TH1F *pred_all_data;
