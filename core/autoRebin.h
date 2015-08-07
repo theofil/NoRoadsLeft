@@ -163,15 +163,15 @@ vector <float> findNiceBins(TH1F *histo_in, float thresh)
   float xMax = histo_in->GetXaxis()->GetXmax();
   if(debug) cout << "xMin = " << xMin << " xMax = " << xMax << " nBins = "<< nBins << endl;
  
-  int firstNonZeroBin = hist_clone->FindFirstBinAbove(0.01);
-  int lastNonZeroBin  = hist_clone->FindLastBinAbove(0.01);
+  int firstNonZeroBin = hist_clone->FindFirstBinAbove(1.e-9);
+  int lastNonZeroBin  = hist_clone->FindLastBinAbove(1.e-9);
   if(debug) cout << "firstNonZeroBin = " << firstNonZeroBin << " lastNonZeroBin = " << lastNonZeroBin << endl;
 
   float firstNonZeroBinX = hist_clone->GetBinLowEdge(firstNonZeroBin);
   float lastNonZeroBinX  = hist_clone->GetBinLowEdge(lastNonZeroBin) + hist_clone->GetBinWidth(lastNonZeroBin);
   if(debug) cout << "firstNonZeroBinX = " << firstNonZeroBinX << " lastNonZeroBin = " << lastNonZeroBinX << endl;
   
-  // --- first check if the histo is already OK 
+  // --- first check if the histo is already OK (and has been rebinned already) 
   string histname = string(histo_in->GetName());
   string forbidenKey = "rbnd";
   std::size_t found = histname.find(forbidenKey);

@@ -23,10 +23,10 @@ void plotMET_datamc();
 // needs to become a function
 string v_met = "met";
 string v_hr  = "vHT";
-string plotTitle     = "_ij2_CE_M81101_"+v_met+"_"+v_hr;
-TCut sel_cut_gauge   = TCut("!isDYTauTau") && TCut("vHT>0 && l1l2Pt>0 && jetPt[0]>50 ");
-TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF_trig && sel_cut_gauge;
-TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_OF_trig && sel_cut_gauge;
+string plotTitle     = "_ej0_CE_M81101_"+v_met+"_"+v_hr;
+TCut sel_cut_gauge   = TCut("!isDYTauTau") && TCut("vHT>0 && l1l2Pt>0");
+TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ej0 && sel_CE && sel_SF_trig && sel_cut_gauge;
+TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ej0 && sel_CE && sel_OF_trig && sel_cut_gauge;
 TCut sel_cut_jzb_pos = TCut((v_hr+"-l1l2Pt>0").c_str());  
 TCut sel_cut_jzb_neg = TCut((v_hr+"-l1l2Pt<0").c_str());  
 string metvar        = v_met.c_str();
@@ -49,9 +49,9 @@ void experimentalJZB()
   cout << "goFast = " << goFast << endl;
   cout << "Lumi = " << Lumi.GetTitle() << endl;
 
-//  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim/";
+  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim/";
 //  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim_ej1/";
-  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim_ij2/";
+//  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim_ij2/";
 
   mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY"                    , Lumi                           ,goFast, kWhite , kRed+1         )); 
 
