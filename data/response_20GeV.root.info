@@ -1,0 +1,5 @@
+/afs/cern.ch/user/t/theofil/mywork/public/ntuples/data_v1/dileptonSkim/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8___RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v2.root 
+TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij0 && sel_CE && sel_SF_trig && sel_cut_gauge;
+
+events->Draw("(vHT-l1l2Pt)>> h1", sel_cut_SF && TCut("abs(l1l2Pt-20)<0.5 && njets<=1 ? 1:0")
+events->Draw("(vHT-l1l2Pt)> >h2", sel_cut_SF && TCut("abs(l1l2Pt-20)<0.5 && njets>1 ? 1:0")

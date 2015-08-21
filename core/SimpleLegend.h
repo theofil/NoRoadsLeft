@@ -148,7 +148,7 @@ void SimpleLegend::FillLegend(SimpleStack *sstack)
     if(sCounter < nSamples - 1)  // check if histogram is not to be visible in the TLegend (has been merged with previous having the same fill color)
     {
       TH1F *previousHist = sstack->histoPointers_[sCounter+1];
-      if(previousHist->GetFillColor() == histPointer->GetFillColor())addEntry = false;
+      if(previousHist->GetFillColor() == histPointer->GetFillColor()){addEntry = false; cout <<"sample " << sampleTitle << " has the same fillcolor as previous one, will not adding it in the TLegend" << endl;  }
     }
   
     if(addEntry && sampleTitle != "Data") this->AddEntry(histPointer, sampleTitle.c_str(), "fl");

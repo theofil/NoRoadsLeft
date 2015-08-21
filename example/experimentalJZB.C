@@ -21,16 +21,17 @@ void plotMET_datamc();
 
 
 // needs to become a function
-string v_met = "met";
-string v_hr  = "vHT";
-string plotTitle     = "_ej0_CE_M81101_"+v_met+"_"+v_hr;
+string v_met  = "abs(vHT-l1l2Pt)";
+string v_hr   = "vHT";
+string v_zpt  = "l1l2Pt";
+string plotTitle     = "_ij0_CE_M81101_"+v_met+"_"+v_hr;
 TCut sel_cut_gauge   = TCut("!isDYTauTau") && TCut("vHT>0 && l1l2Pt>0");
-TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ej0 && sel_CE && sel_SF_trig && sel_cut_gauge;
-TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ej0 && sel_CE && sel_OF_trig && sel_cut_gauge;
-TCut sel_cut_jzb_pos = TCut((v_hr+"-l1l2Pt>0").c_str());  
-TCut sel_cut_jzb_neg = TCut((v_hr+"-l1l2Pt<0").c_str());  
+TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij0 && sel_CE && sel_SF_trig && sel_cut_gauge;
+TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij0 && sel_CE && sel_OF_trig && sel_cut_gauge;
+TCut sel_cut_jzb_pos = TCut((v_hr+"-" + v_zpt +">0").c_str());  
+TCut sel_cut_jzb_neg = TCut((v_hr+"-" + v_zpt +"<0").c_str());  
 string metvar        = v_met.c_str();
-string jzbvar        = (v_hr+"-l1l2Pt").c_str();
+string jzbvar        = (v_hr+"-"+v_zpt).c_str();
 pnumber OF_scale     = pnumber(1, 0.05);
 
 // HACK no scale factor between positive and negative
@@ -53,7 +54,16 @@ void experimentalJZB()
 //  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim_ej1/";
 //  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim_ij2/";
 
-  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY"                    , Lumi                           ,goFast, kWhite , kRed+1         )); 
+  //mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY"                    , Lumi                           ,goFast, kWhite , kRed+1         )); 
+ /*
+  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY0to50"                 , Lumi*TCut("l1l2Pt<50 ? 1:0")     ,goFast, kRed+1 , kRed+1         )); 
+  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY50to100"               , Lumi*TCut("l1l2Pt>50 && l1l2Pt<100 ? 1:0")        ,goFast, kBlue+1 , kBlue+1         )); 
+  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY100to150"              , Lumi*TCut("l1l2Pt>100 && l1l2Pt<150? 1:0")        ,goFast, kGreen+1 , kGreen+1         ));
+  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY150toinf"              , Lumi*TCut("l1l2Pt>150 ? 1:0")        ,goFast, kWhite , kPink+1         ));
+*/
+
+  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "njets<=1"                 , Lumi*TCut("abs(l1l2Pt-55)<2.5 && njets<=1 ? 1:0")     ,goFast, kRed+1 , kRed+1         )); 
+  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "njets>1"                 , Lumi*TCut("abs(l1l2Pt-55)<2.5 && njets>1 ? 1:0")     ,goFast, kWhite , kBlack  )); 
 
   cout << "..:: SimpleJZB log ::..." << endl;
   cout << "sel_cut_SF = " << sel_cut_SF.GetTitle() << endl;
@@ -84,50 +94,39 @@ void experimentalJZB()
       sstack_mc_SF_hall->Draw("axis same");
       simpleCan_SF->CMSPre();
       simpleCan_SF->SetLogy();
-      sleg_SF->SetHeader(SF_header);
+//      sleg_SF->SetHeader(SF_header);
       sleg_SF->FillLegend(sstack_mc_SF);
       sleg_SF->Draw("same");
       simpleCan_SF->Save(outputDir);
 
   }
 
-  // --- contrast hadronic recoil versus dilepton pt
+  // --- plot JZB all for mc
   {
       char SF_header[] = "Same Flavor";
       char OF_header[] = "Opposite Flavor";
       string title     = "";
        
-      title = "hr_l1l2Pt"+plotTitle+"_SF";
-      SimpleStack * sstack_hr_mc_SF    = mcDriver.getSimpleStackTH1F(v_hr,";P_{T} [GeV]; events / 5 GeV;",24,0,120, sel_cut_SF);
-      TH1F *sstack_hr_mc_SF_hall       = mcDriver.getHistoTH1F(sstack_hr_mc_SF);	
-      SimpleStack * sstack_l1l2Pt_mc_SF    = mcDriver.getSimpleStackTH1F("l1l2Pt",";P_{T} [GeV]; events / 5 GeV;",24,0,120, sel_cut_SF);
-      TH1F *sstack_l1l2Pt_mc_SF_hall       = mcDriver.getHistoTH1F(sstack_l1l2Pt_mc_SF);	
-      SimpleLegend *sleg = new SimpleLegend("TTR");
-      SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 2);
-      simpleCan->Up();
-      simpleCan->ShapeMeUp(sstack_l1l2Pt_mc_SF_hall); 
-      simpleCan->ShapeMeUp(sstack_hr_mc_SF_hall); 
-      sstack_l1l2Pt_mc_SF_hall->SetLineColor(kBlue);
-      sstack_l1l2Pt_mc_SF_hall->Draw("hist");
-      sstack_hr_mc_SF_hall->Draw("hist same");
-      simpleCan->CMSPre();
-      simpleCan->SetLogy();
-      sleg->AddEntry(sstack_l1l2Pt_mc_SF_hall, "P_{T} (l1,l2)", "F");
-      sleg->AddEntry(sstack_hr_mc_SF_hall, "P_{T} (had recoil)", "F");
-      sleg->Draw("same");
-      simpleCan->Dw();
-      //TH1F *hratio = doSimpleRatio(sstack_hr_mc_SF_hall, sstack_l1l2Pt_mc_SF_hall);
-      TH1F *hratio = doRatio(sstack_hr_mc_SF_hall, sstack_l1l2Pt_mc_SF_hall, 3);
-      hratio->GetYaxis()->SetTitle("ratio");
-      hratio->GetYaxis()->CenterTitle();
-      simpleCan->ShapeMeDw(hratio);
-      hratio->SetLineColor(kBlack);
-      hratio->Draw("e1");
-      hratio->GetYaxis()->SetRangeUser(0.0,2.0);
-      hratio->GetYaxis()->SetNdivisions(507);
-      simpleCan->Save(outputDir);
+      title = "jzb_noStack"+plotTitle+"_SF";
+      SimpleStack * sstack_mc_SF    = mcDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 2 GeV;",60,-60,60, sel_cut_SF);
+      TH1F *sstack_mc_SF_hall       = mcDriver.getHistoTH1F(sstack_mc_SF);	
+      SimpleLegend *sleg_SF = new SimpleLegend("TLSF");
+      SimpleCanvas *simpleCan_SF = new SimpleCanvas(title.c_str(), 1);
+//      sstack_mc_SF_hall->Draw("hist");
+//      sstack_mc_SF_hall->Draw("hist same");
+      sstack_mc_SF_hall->Draw("axis");
+      sstack_mc_SF->Draw("hist nostack same");
+//      sstack_mc_SF_hall->Draw("hist same");
+//      sstack_mc_SF_hall->Draw("axis same");
+      simpleCan_SF->CMSPre();
+      simpleCan_SF->SetLogy();
+//      sleg_SF->SetHeader(SF_header);
+      sleg_SF->FillLegend(sstack_mc_SF);
+      sleg_SF->Draw("same");
+      simpleCan_SF->Save(outputDir);
 
   }
+
 
   // --- calculate MET for jzb_pos and jzb_neg
   {
@@ -163,6 +162,51 @@ void experimentalJZB()
       vector<string> sampleTitles_mc = sstack_mc_SF_jzb_pos->sampleTitles_;
       vector<TH1F*> jzb_predictions_mc;
 
+      for(size_t ii = 0; ii < sampleTitles_mc.size(); ++ii)
+      {
+       	cout <<"processing "<< sampleTitles_mc[ii] << endl;
+
+       	// --- assumes the OF_scale is uncorrelated in JZB > 0, JZB < 0
+        TH1F *SF_jzb_pos = (TH1F*)SF_jzb_pos_TH1F_vec_mc[ii]->Clone(); 
+        TH1F *SF_jzb_neg = (TH1F*)SF_jzb_neg_TH1F_vec_mc[ii]->Clone();
+        TH1F *jzb_only = (TH1F*)SF_jzb_neg->Clone();
+        TH1F *jzb_scaled = ScaleTH1F(jzb_only, jzb_norm_mc);
+        TH1F *pred = jzb_scaled;
+
+        jzb_predictions_mc.push_back(pred);
+
+        SF_jzb_pos->SetLineColor(kBlack);
+        SF_jzb_pos->SetFillColor(kWhite);
+        pred->SetLineColor(kRed);
+        pred->SetFillColor(kWhite);
+        pred->SetLineWidth(2);
+        pred->SetLineStyle(2);
+
+        title = metvar+plotTitle+"_mc"+"_pred"+any2string(ii);  
+        SimpleLegend *sleg      = new SimpleLegend("jzb_exp_mode");
+        SimpleCanvas *simpleCan = new SimpleCanvas(title.c_str(), 2);
+        simpleCan->CMSPre();
+        simpleCan->SetLogy();
+        simpleCan->Up();
+        simpleCan->ShapeMeUp(SF_jzb_pos); 
+        simpleCan->ShapeMeUp(pred); 
+        SF_jzb_pos->Draw("hist");
+        pred->Draw("hist same"); 
+        sleg->SetHeader((sampleTitles_mc[ii]+" [SF]").c_str());
+        sleg->AddEntry(SF_jzb_pos,"JZB > 0","FL");
+        sleg->AddEntry(pred, "prediction", "FL");
+        sleg->Draw("same");
+        simpleCan->Dw();
+        TH1F *hratio = doSimpleRatio(SF_jzb_pos, pred);
+        hratio->GetYaxis()->SetTitle("ratio");
+        hratio->GetYaxis()->CenterTitle();
+        simpleCan->ShapeMeDw(hratio);
+        hratio->Draw("e1");
+        hratio->GetYaxis()->SetRangeUser(0.0,2.0);
+        hratio->GetYaxis()->SetNdivisions(507);
+        simpleCan->Save(outputDir);
+      }	
+
 
       TH1F *pred_all_mc = (TH1F*)sstack_mc_SF_jzb_neg_hall->Clone();
      // TH1F *jzb_only = (TH1F*)sstack_mc_SF_jzb_neg_hall->Clone();
@@ -179,6 +223,8 @@ void experimentalJZB()
         simpleCan->ShapeMeUp(pred_all_mc); 
         sstack_mc_SF_jzb_pos_hall->SetLineColor(kBlue);
         sstack_mc_SF_jzb_pos_hall->Draw("hist");
+        pred_all_mc->SetLineColor(kRed);
+        pred_all_mc->SetFillColor(kWhite);
         pred_all_mc->Draw("hist same"); 
         sleg->SetHeader("Same Flavor [MC]");
         sleg->AddEntry(sstack_mc_SF_jzb_pos_hall,"JZB > 0","FL");
