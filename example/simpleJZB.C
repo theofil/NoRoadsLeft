@@ -29,9 +29,9 @@ void simpleJZB()
   string v_met = "met";
   string v_hr  = "vHT";
   string plotTitle     = "_ij2_CE_M81101_"+v_met+"_"+v_hr;
-  TCut sel_cut_gauge   = TCut("!isDYTauTau") && TCut("vHT>0 && l1l2Pt>0 && jetPt[1]>50 ");
-  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_SF_trig && sel_cut_gauge;
-  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && sel_CE && sel_OF_trig && sel_cut_gauge;
+  TCut sel_cut_gauge   = TCut("!isDYTauTau") && TCut("vHT>0 && l1l2Pt>0 && jetPt[1]>0 ");
+  TCut sel_cut_SF      = sel_basic && sel_M81101 && sel_ij2 && !sel_CE && sel_SF_trig && sel_cut_gauge;
+  TCut sel_cut_OF      = sel_basic && sel_M81101 && sel_ij2 && !sel_CE && sel_OF_trig && sel_cut_gauge;
   TCut sel_cut_jzb_pos = TCut((v_hr+"-l1l2Pt>0").c_str());  
   TCut sel_cut_jzb_neg = TCut((v_hr+"-l1l2Pt<0").c_str());  
   string metvar        = v_met.c_str();

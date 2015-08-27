@@ -55,15 +55,16 @@ void experimentalJZB()
 //  string myLocalPath       = "/afs/cern.ch/work/t/theofil/public/ntuples/data_v1/dileptonSkim_ij2/";
 
   //mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY"                    , Lumi                           ,goFast, kWhite , kRed+1         )); 
- /*
+  
   mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY0to50"                 , Lumi*TCut("l1l2Pt<50 ? 1:0")     ,goFast, kRed+1 , kRed+1         )); 
   mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY50to100"               , Lumi*TCut("l1l2Pt>50 && l1l2Pt<100 ? 1:0")        ,goFast, kBlue+1 , kBlue+1         )); 
   mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY100to150"              , Lumi*TCut("l1l2Pt>100 && l1l2Pt<150? 1:0")        ,goFast, kGreen+1 , kGreen+1         ));
   mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "DY150toinf"              , Lumi*TCut("l1l2Pt>150 ? 1:0")        ,goFast, kWhite , kPink+1         ));
-*/
 
-  mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "njets<=1"                 , Lumi*TCut("abs(l1l2Pt-55)<2.5 && njets<=1 ? 1:0")     ,goFast, kRed+1 , kRed+1         )); 
+/*
+ * mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "njets<=1"                 , Lumi*TCut("abs(l1l2Pt-55)<2.5 && njets<=1 ? 1:0")     ,goFast, kRed+1 , kRed+1         )); 
   mcDriver.push_back(new SimpleSample(myLocalPath+fname_DYJetsM50    , "njets>1"                 , Lumi*TCut("abs(l1l2Pt-55)<2.5 && njets>1 ? 1:0")     ,goFast, kWhite , kBlack  )); 
+*/
 
   cout << "..:: SimpleJZB log ::..." << endl;
   cout << "sel_cut_SF = " << sel_cut_SF.GetTitle() << endl;

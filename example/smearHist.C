@@ -16,7 +16,7 @@ void normHist(TH1F *hist)
 
 void smearHist()
 {
-    fp = new TFile("tmp.root","OPEN");
+    fp = new TFile("../data/response_20GeV.root","OPEN");
     h1 = (TH1F*)fp->Get("h1");
     h2 = (TH1F*)fp->Get("h2");
 
