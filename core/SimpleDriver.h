@@ -81,6 +81,7 @@ class SimpleDriver: public std::vector<SimpleSample*>
 //    sum->Merge(histos);
 //    sum->SetFillColor(kWhite);
 //    sum->SetLineColor(kBlack);
+    
     return sum;
   }
 
@@ -212,11 +213,11 @@ class SimpleDriver: public std::vector<SimpleSample*>
     }
   }  
 
-  SimpleStack *simple_stacks_[30];
-  THStack *stacks_[30];
-  TH1F *h1_[50];
-  TH2F *h2_[50];
-  TProfile *pX_[50];
+  SimpleStack *simple_stacks_[50];
+  THStack *stacks_[50];
+  TH1F *h1_[100];
+  TH2F *h2_[100];
+  TProfile *pX_[100];
   int scounter_ ;
   int h1counter_ ;
   int h2counter_ ;

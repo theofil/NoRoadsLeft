@@ -122,37 +122,37 @@ void kinematics()
     hs_mc   = mcDriver.getSimpleStackTH1F  ("lepPt[0]", ";P_{T}(l1) [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
     basicDataMCPlot("lepPt1_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
   
-    hs_data = dataDriver.getSimpleStackTH1F("lepPt[1]", ";P_{T}(l2) [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepPt[1]", ";P_{T}(l2) [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
-    basicDataMCPlot("lepPt2_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
-  
-    hs_data = dataDriver.getSimpleStackTH1F("lepEta[0]", ";#eta(l1); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepEta[0]", ";#eta(l1); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
-    basicDataMCPlot("lepEta1_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
-  
-    hs_data = dataDriver.getSimpleStackTH1F("lepEta[1]", ";#eta(l2); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepEta[1]", ";#eta(l2); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
-    basicDataMCPlot("lepEta2_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
-  
-    hs_data = dataDriver.getSimpleStackTH1F("lepPhi[0]", ";#phi(l1); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepPhi[0]", ";#phi(l1); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
-    basicDataMCPlot("lepPhi1_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
-  
-    hs_data = dataDriver.getSimpleStackTH1F("lepPhi[1]", ";#phi(l2); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepPhi[1]", ";#phi(l2); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
-    basicDataMCPlot("lepPhi2_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
-  
-    hs_data = dataDriver.getSimpleStackTH1F("met", ";MET [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("met", ";MET [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
-    basicDataMCPlot("met_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
-  
-    hs_data = dataDriver.getSimpleStackTH1F("l1l2M", ";mass(l1, l2) [GeV]; events / 5 GeV", 60, 20, 320, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("l1l2M", ";mass(l1, l2) [GeV]; events / 5 GeV", 60, 20, 320, mySelection_emu ); 
-    basicDataMCPlot("l1l2M_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
-  
-    hs_data = dataDriver.getSimpleStackTH1F("l1l2Pt", ";P_{T}(l1, l2) [GeV]; events / 10 GeV", 50, 0, 500, mySelection_emu ); 
-    hs_mc   = mcDriver.getSimpleStackTH1F  ("l1l2Pt", ";P_{T}(l1, l2) [GeV]; events / 10 GeV", 50, 0, 500, mySelection_emu ); 
-    basicDataMCPlot("l1l2Pt_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
+//    hs_data = dataDriver.getSimpleStackTH1F("lepPt[1]", ";P_{T}(l2) [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepPt[1]", ";P_{T}(l2) [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
+//    basicDataMCPlot("lepPt2_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
+//  
+//    hs_data = dataDriver.getSimpleStackTH1F("lepEta[0]", ";#eta(l1); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepEta[0]", ";#eta(l1); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
+//    basicDataMCPlot("lepEta1_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
+//  
+//    hs_data = dataDriver.getSimpleStackTH1F("lepEta[1]", ";#eta(l2); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepEta[1]", ";#eta(l2); events / 0.1", 50, -2.5, 2.5, mySelection_emu ); 
+//    basicDataMCPlot("lepEta2_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
+//  
+//    hs_data = dataDriver.getSimpleStackTH1F("lepPhi[0]", ";#phi(l1); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepPhi[0]", ";#phi(l1); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
+//    basicDataMCPlot("lepPhi1_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
+//  
+//    hs_data = dataDriver.getSimpleStackTH1F("lepPhi[1]", ";#phi(l2); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("lepPhi[1]", ";#phi(l2); events / 0.2", 32, -3.2, 3.2, mySelection_emu ); 
+//    basicDataMCPlot("lepPhi2_basic_emu", hs_data, hs_mc, false, "TR", headerTitle );
+//  
+//    hs_data = dataDriver.getSimpleStackTH1F("met", ";MET [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("met", ";MET [GeV]; events / 10 GeV", 35, 0, 350, mySelection_emu ); 
+//    basicDataMCPlot("met_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
+//  
+//    hs_data = dataDriver.getSimpleStackTH1F("l1l2M", ";mass(l1, l2) [GeV]; events / 5 GeV", 60, 20, 320, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("l1l2M", ";mass(l1, l2) [GeV]; events / 5 GeV", 60, 20, 320, mySelection_emu ); 
+//    basicDataMCPlot("l1l2M_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
+//  
+//    hs_data = dataDriver.getSimpleStackTH1F("l1l2Pt", ";P_{T}(l1, l2) [GeV]; events / 10 GeV", 50, 0, 500, mySelection_emu ); 
+//    hs_mc   = mcDriver.getSimpleStackTH1F  ("l1l2Pt", ";P_{T}(l1, l2) [GeV]; events / 10 GeV", 50, 0, 500, mySelection_emu ); 
+//    basicDataMCPlot("l1l2Pt_basic_emu", hs_data, hs_mc, true, "TR", headerTitle );
   }
 
 
@@ -168,12 +168,13 @@ void basicDataMCPlot(string title, SimpleStack *hs_data, SimpleStack *hs_mc, boo
   TH1F *hall_data = dataDriver.getHistoTH1F(hs_data);
   simpleCan->ShapeMeUp(hall_data);
   simpleCan->ShapeMeUp(hall_mc);
+  hall_data->Sumw2(kFALSE); hall_data->SetBinErrorOption(TH1::kPoisson);
   hall_data->Draw("e1");
   hall_mc->Draw("hist same");
   hs_mc  ->Draw("hist same");
   hall_mc->Draw("axis same");
   hall_mc->Draw("hist same");
-  hs_data->Draw("same e1");
+  hall_data->Draw("same e1");
   simpleCan->CMSPre();
   if(setLog) simpleCan->SetLogy();
   SimpleLegend *sleg = new SimpleLegend(legPos.c_str());
