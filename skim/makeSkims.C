@@ -17,6 +17,8 @@ void makeSkims()
 
   for(auto it: myActiveSamples) 
   {
+   if(it.sampleName_ != fname_DYJetsM1050) continue;
+
    float xsection      = std::stof(string(it.sampleXS_.GetTitle())) ;
    string filename     = it.sampleName_;
    string filename_in  = localPath + filename;
@@ -64,7 +66,8 @@ void makeSkims()
    {
       events_in->GetEntry(ii);
       events_friend->GetEntry(ii); // you definetly need this!
-      if(nleps==2 && njets==1)events_out->Fill();
+//      if(nleps==2 && njets==1)events_out->Fill();
+      events_out->Fill();
    }
    
    events_out->AutoSave();
