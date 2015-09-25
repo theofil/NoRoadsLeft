@@ -11,6 +11,7 @@
 #include "../core/SimplePaveText.h"
 #include "../example/v1_drivers.C"
 
+
 using namespace std;
 bool goFast(false);
 
@@ -40,6 +41,7 @@ TFile *fp_in;
 TH1F *histo[30];
 TF1  *fgauss[30];
 
+double fnc_dscb(double*xx,double*pp);
 
 void readLib()
 { 
@@ -67,6 +69,7 @@ void readLib()
 
   fp_in = new TFile("../data/JZBlib_mc.root", "READ");
 
+
   for(size_t bin = 0; bin < myPtEtaBins.size(); ++bin )
   {
     PtAbsEtaBin myPtEtaBin = myPtEtaBins[bin];
@@ -82,20 +85,60 @@ void readLib()
     SimpleDriver myDriver = mcDriver;
   
     histo[bin] = (TH1F*)fp_in->Get((plotTitle+"_TH1F").c_str());
-//    histo[bin]->Sumw2(false);
-//    histo[bin]->SetBinErrorOption(TH1::kPoisson);
-
-/*
-    fgauss[bin] = new TF1((plotTitle+"_TH1F"+"_TF1").c_str(), "gaus", -200, 200);
-    fgauss[bin]->SetLineColor(kBlue);
-    fgauss[bin]->SetLineWidth(2);
-    histo[bin]->Fit(fgauss[bin],"R");
-*/
     
-//    h1_tmp->SetTitle((myPtEtaBin.getTitle() + ds).c_str());
-//    h1_tmp->SetName((plotTitle+"_TH1F").c_str());
+
   }
+
+    TF1* fdscb = new TF1("fdscb",fnc_dscb, -200,200,7);
+    TF1* fgaus = new TF1("fgaus","gaus",-10,10);
+    fgaus->SetLineColor(kBlue);
+    
+    
+    int bin =9;
+    TCanvas *cantmp = new TCanvas();
+    cantmp->SetLogy();
+    histo[bin]->Fit(fgaus);
+    fdscb->FixParameter(0, fgaus->GetParameter(0));
+    fdscb->FixParameter(1, fgaus->GetParameter(1));
+    fdscb->FixParameter(2, fgaus->GetParameter(2));
+    fdscb->SetParameter(3, 1);
+    fdscb->SetParameter(4, 0.5);
+    fdscb->SetParameter(5, 1);
+    fdscb->SetParameter(6, 0.5);
+    histo[bin]->Fit(fdscb);
+    histo[bin]->Draw();
+    fgaus->Draw("same");
+    fdscb->Draw("same");
+
 }
 
+// from https://github.com/cms-analysis/JetMETAnalysis-JetAnalyzers/blob/master/bin/jet_response_fitter_x.cc
 
+double fnc_dscb(double*xx,double*pp)
+{
+    double x   = xx[0];
+    // gaussian core
+    double N   = pp[0];//norm
+    double mu  = pp[1];//mean
+    double sig = pp[2];//variance
+
+    // transition parameters
+    double a1  = pp[3];
+    double p1  = pp[4];
+    double a2  = pp[5];
+    double p2  = pp[6];
+   
+    double u   = (x-mu)/sig;
+    double A1  = TMath::Power(p1/TMath::Abs(a1),p1)*TMath::Exp(-a1*a1/2);
+    double A2  = TMath::Power(p2/TMath::Abs(a2),p2)*TMath::Exp(-a2*a2/2);
+    double B1  = p1/TMath::Abs(a1) - TMath::Abs(a1);
+    double B2  = p2/TMath::Abs(a2) - TMath::Abs(a2);
+    
+    double result(N);
+    if      (u<-a1) result *= A1*TMath::Power(B1-u,-p1);
+    else if (u<a2)  result *= TMath::Exp(-u*u/2);
+    else            result *= A2*TMath::Power(B2+u,-p2);
+   
+    return result;
+}
 
