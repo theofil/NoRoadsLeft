@@ -65,12 +65,9 @@ void makeLib()
 
   cout << "..:: makeLib log ::..." << endl;
   cout << endl;
- 
-    
 
   fp_out = new TFile("/tmp/theofil/JZBlib_mc.root", "RECREATE");
   fp_out->cd();
-
 
   for(size_t bin = 0; bin < myPtEtaBins.size(); ++bin )
   {
@@ -115,6 +112,9 @@ void makeLib()
     simpleCan->can_->Write();
     h1_tmp->Write();
   }
+
+  // here start the event loop 
+
 }
 
 
