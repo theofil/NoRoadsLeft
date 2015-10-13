@@ -9,6 +9,7 @@
 #include "TProfile.h"
 #include "THStack.h"
 #include "TCut.h"
+#include "TChain.h"
 #include <stdlib.h>
 
 #ifndef SimpleDriver_h
@@ -19,6 +20,7 @@ class SimpleDriver: public std::vector<SimpleSample*>
 {
   public: 
   SimpleDriver(){h1counter_ = 0; scounter_ = 0; h2counter_ = 0; pXcounter_ = 0;}
+  TChain *getTChain(){TChain *myTChain= new TChain("demo/events"); for(size_t iSample = 0; iSample < this->size(); ++iSample) myTChain->Add(this->at(iSample)->chain_); return myTChain;}
 
   SimpleStack * getSimpleStackTH1F(string var, string histTitle, int nBinsX, float minX, float maxX, TCut myCut)
   {

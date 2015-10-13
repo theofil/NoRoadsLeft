@@ -21,7 +21,11 @@ class SimpleSample
     events_ = (TTree*)fp_->Get("demo/events");
     maxN_ = events_->GetEntries();
     if(fast) maxN_ = ULong64_t(0.01*maxN_); // don't change this 0.01 unless you change also totEveW*100 when fast = true
-    
+
+    // creating also a TChain
+    chain_ = new TChain("demo/events");
+    chain_->Add(filename.c_str());   
+
     int filenameSize = filename.size();
     string friendTreePossiblePath = filename.substr(0,filenameSize-5) + ".aux.root";
 
@@ -31,16 +35,13 @@ class SimpleSample
     if(auxFileExists){
         cout << "### a good friend was found in: " << friendTreePossiblePath.c_str() << endl;
 	events_->AddFriend("events",friendTreePossiblePath.c_str());
+        chain_->AddFriend ("events",friendTreePossiblePath.c_str());
     }
 
     if(tcut == TCut("0")) maxN_ = 0; // that's special for the null trivial sample
     //if(title != "Data" && !auxFileExists)tcut_ = tcut_*TCut( ("1./"+any2string(maxN_)).c_str()); // if aux file doesn't exists use 1/maxN_ for the MC normalization
     //if(title != "Data" && auxFileExists)tcut_ = tcut_*TCut("totEveW"); // if aux file exists use multiply with totEveW (takes into account 1/Ntot, PU etc)
     if(title != "Data")tcut_ = tcut_*TCut("totEveW*xsection"); // if aux file exists use multiply with totEveW (takes into account 1/Ntot, PU etc)
-
-    // --- set aliases
-    events_->SetAlias("jzb","t1vHT-l1l2Pt");
-    events_->SetAlias("rawjzb","vHT-l1l2Pt");
 
     cout << "opening "<< filename << " ; title = "<< title_ << " ; TCut = " << tcut_.GetTitle() << " ; maxN = " << maxN_ << " ;  events_->GetEntries() = " << events_->GetEntries() << endl;
   } 
@@ -65,6 +66,7 @@ class SimpleSample
  
   TFile *fp_;
   TTree *events_;
+  TChain *chain_;
   ULong64_t maxN_;
   TCut  tcut_;
   int  fillColor_;

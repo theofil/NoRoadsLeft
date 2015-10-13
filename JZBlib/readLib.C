@@ -10,7 +10,7 @@
 #include "../core/LocalFilePath.h"
 #include "../core/SimplePaveText.h"
 #include "../example/v1_drivers.C"
-
+#include "../friends/readNTPL.h"
 
 using namespace std;
 bool goFast(true);
@@ -50,7 +50,7 @@ int findPtEtaBin(vector<PtAbsEtaBin> myPtEtaBins, float pt, float eta)
     return res;	    
 }
 
-TFile *fp_in;
+TFile *fp_in_local;
 TH1F *histo[30];
 TF1  *fgauss[30];
 
@@ -79,7 +79,7 @@ void readLib()
   cout << "..:: makeLib log ::..." << endl;
   cout << endl;
 
-  fp_in = new TFile("../data/JZBlib_mc.root", "READ");
+  fp_in_local = new TFile("../data/JZBlib_mc.root", "READ");
 
   TF1* fdscb[myPtEtaBins.size()];
   TF1* fgaus[myPtEtaBins.size()];
@@ -98,14 +98,16 @@ void readLib()
     string ds            = " (mc)";
     SimpleDriver myDriver = mcDriver;
   
-    histo[bin] = (TH1F*)fp_in->Get((plotTitle+"_TH1F").c_str());
+    histo[bin] = (TH1F*)fp_in_local->Get((plotTitle+"_TH1F").c_str());
 
     fdscb[bin] = new TF1(("fdscb_b"+any2string(bin)).c_str(),fnc_dscb, -200,200,7);
     fgaus[bin] = new TF1(("fgaus_b"+any2string(bin)).c_str(),"gaus",-10,10);
     fgaus[bin]->SetLineColor(kBlue);
 
-    TCanvas *cantmp = new TCanvas();
-    cantmp->SetLogy();
+//    TCanvas *cantmp = new TCanvas();
+//    cantmp->SetLogy();
+    SimpleCanvas *simpleCan = new SimpleCanvas(plotTitle, 1);
+    simpleCan->SetLogy();
     histo[bin]->Fit(fgaus[bin]);
     fdscb[bin]->FixParameter(0, fgaus[bin]->GetParameter(0));
     fdscb[bin]->FixParameter(1, fgaus[bin]->GetParameter(1));
@@ -118,6 +120,7 @@ void readLib()
     histo[bin]->Draw();
    // fgaus[bin]->Draw("same");
     fdscb[bin]->Draw("same");
+    simpleCan->Save(outputDir);
   }
 
   
@@ -159,6 +162,27 @@ void readLib()
   */
     simpleCan->Save(outputDir);
   }
+
+  // or make a chain in SimpleDriver.h ?
+  // would need to map the branches to local variables
+  for(size_t iSample = 0; iSample < myDriver.size(); ++iSample)
+  {
+    cout << "iSample = " << iSample << endl;
+  }
+
+/*
+  fp_in_local      = new TFile ( filename_in.c_str()  ,  "OPEN");
+  events_in  = (TTree*)fp_in_local->Get("demo/events");
+  init();
+ 
+  cout << "my filename is " << filename_in.c_str() << endl;
+  for (ULong64_t ii=0; ii<nentries;ii++)
+  {
+    events_in->GetEntry(ii);
+
+  }
+*/
+
 }
 
 // from https://github.com/cms-analysis/JetMETAnalysis-JetAnalyzers/blob/master/bin/jet_response_fitter_x.cc
