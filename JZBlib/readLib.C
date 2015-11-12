@@ -12,9 +12,21 @@
 #include "../example/v1_drivers.C"
 #include "../friends/readNTPL.h"
 
-using namespace std;
-bool goFast(true);
+#include "TVector2.h"
 
+using namespace std;
+bool goFast(false);
+
+TH1F *h_jzb_true_ej1;    
+TH1F *h_jzb_smeared_ej1;
+
+TH1F *h_jzb_true_ij2;    
+TH1F *h_jzb_smeared_ij2;
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+ 
 class PtAbsEtaBin
 {
     public:
@@ -136,9 +148,109 @@ void readLib()
   v1_drivers(goFast);
 
   SimpleDriver myDriver = mcDriver;
+
+
+  TChain *ch = myDriver.getTChain();
+  init(ch);
+  float totEveW_;
+  float xsection_;
+  ch->SetBranchAddress("totEveW", &totEveW_);   
+  ch->SetBranchAddress("xsection", &xsection_);
+
+  ULong64_t chainEntries = ch->GetEntries();
+  if(goFast) chainEntries = 0.01*chainEntries;
+
+//    sel_basic && sel_M81101 && sel_ej1; 
+
+  h_jzb_true_ej1    = new TH1F("h_jzb_true_ej1", ";JZB [GeV]; events / 5 GeV", 80, -200, 200);
+  h_jzb_smeared_ej1 = new TH1F("h_jzb_smeared_ej1", ";JZB [GeV]; events / 5 GeV", 80, -200, 200);
+  h_jzb_true_ij2    = new TH1F("h_jzb_true_ij2", ";JZB [GeV]; events / 5 GeV", 80, -200, 200);
+  h_jzb_smeared_ij2 = new TH1F("h_jzb_smeared_ij2", ";JZB [GeV]; events / 5 GeV", 80, -200, 200);
+
+  for(ULong64_t ii=0; ii < chainEntries;ii++)
+  {
+    ch->GetEntry(ii);
+    bool bool_sel_M81101 = l1l2M_>81 && l1l2M_<101; 
+    float float_sel_magic = ((lepID_[0]*lepID_[1] == -11*13) ? -1 : 0) + ((lepID_[0]*lepID_[1] == -11*11) ? 1 : 0) + ((lepID_[0]*lepID_[1] == -13*13) ? 1 : 0);
+    bool bool_basic = goodVtx_ && lepPt_[0]>25 && lepPt_[1]>20 && l1l2DR_>0.3 && !(fabs(lepEta_[0]) > 1.4 && fabs(lepEta_[0]) < 1.6) && !(fabs(lepEta_[1]) > 1.4 && fabs(lepEta_[1]) < 1.6);
+    float eventW = totEveW_*xsection_*42;
+    bool bool_sel_ej1 = njets_==1;
+    bool bool_sel_ij2 = njets_>=2;
+   
+    if(bool_sel_M81101 && bool_basic && bool_sel_ej1)
+    {
+	float jzbvar_ = vHT_ - l1l2Pt_;
+        h_jzb_true_ej1->Fill(jzbvar_, float_sel_magic*eventW);
+    }
+
+    if(bool_sel_M81101 && bool_basic && bool_sel_ij2)
+    {
+	float jzbvar_ = vHT_ - l1l2Pt_;
+        h_jzb_true_ij2->Fill(jzbvar_, float_sel_magic*eventW);
+    }
+
+    if(bool_sel_M81101 && bool_basic && bool_sel_ej1 && met_ < 20)
+    {
+/*
+	float jzbvar_ = vHT_ - l1l2Pt_;
+        
+        for(int jj =0 ; jj < 1; jj++){
+	    float tmp_jetPt = jetPt_[0];    
+	    float tmp_jetEta = jetEta_[0];    
+	    jzbvar_ =   fdscb[findPtEtaBin(myPtEtaBins, tmp_jetPt, tmp_jetEta)]->GetRandom();
+	    h_jzb_smeared_ej1->Fill(jzbvar_, float_sel_magic*eventW);
+        }
+*/  
+
+    	TVector2 jzbVec(0,0);
+      	int nGen = 2;
+	for(int jj =0 ; jj < nGen; jj++)
+	{
+	    float jzbvar_ = vHT_ - l1l2Pt_;
+	    for(int nj =0 ; nj < njets_; nj++)
+	    {
+		float tmp_jetPt  = jetPt_[nj];    
+	    	float tmp_jetEta = jetEta_[nj];
+	    	float tmp_jetPhi = jetPhi_[nj];
+	      	float jzb_mag = fdscb[findPtEtaBin(myPtEtaBins, tmp_jetPt, tmp_jetEta)]->GetRandom();
+		if(jzb_mag < 0) {jzb_mag = -jzb_mag; tmp_jetPhi = -tmp_jetPhi;}
+                
+		jzbVec += TVector2(fdscb[findPtEtaBin(myPtEtaBins, tmp_jetPt, tmp_jetEta)]->GetRandom(), tmp_jetPhi);
+	    }
+            
+	    jzbvar_ = jzbVec.Mod();
+            
+	    h_jzb_smeared_ej1->Fill(jzbvar_, float_sel_magic*eventW);
+	}
+   }
+
+/*
+    if(bool_sel_M81101 && bool_basic && bool_sel_ij2 && met_ < 20)
+    {
+	float jzbvar_ = vHT_ - l1l2Pt_;
+        TVector2 jzbVec(0,0);
+        int nGen = 2;
+        for(int jj =0 ; jj < nGen; jj++)
+	{
+            for(int nj =0 ; nj < njets_; nj++)
+	    {
+                float tmp_jetPhi = jetPhi_[nj];
+                float jzb_mag = fdscb[findPtEtaBin(myPtEtaBins, tmp_jetPt, tmp_jetEta)]->GetRandom();
+                if(jzb_mag < 0) {jzb_mag = -jzb_mag; tmp_jetPhi = tmp_jetPhi + 3.14159;}
+
+                jzbVec += TVector2(fdscb[findPtEtaBin(myPtEtaBins, tmp_jetPt, tmp_jetEta)]->GetRandom(), tmp_jetPhi);
+	    }
+	    jzbvar_ = jzbVec.Mod();
+	    h_jzb_smeared_ij2->Fill(jzbvar_, float_sel_magic*eventW);
+        }
+    }
+*/
+    
+  } 
+
+
   {
     string plotTitle     = "ej1_closure";
-    string ds            = " (mc)";
     SimpleStack * ss_tmp    = myDriver.getSimpleStackTH1F(jzbvar,";JZB [GeV]; events / 5 GeV;", 80, -200, 200, sel_cut);
     TH1F *h1_tmp    = myDriver.getHistoTH1F(ss_tmp);	
     SimpleLegend *sleg = new SimpleLegend("TLSF");
@@ -147,41 +259,42 @@ void readLib()
     ss_tmp->GetXaxis()->SetTitle(h1_tmp->GetXaxis()->GetTitle());
     h1_tmp->Draw("hist same");
     h1_tmp->Draw("axis same");
+    h_jzb_true_ej1->Draw("e1 same");
     sleg->FillLegend(ss_tmp);
     sleg->Draw("same");
-  /*
-    TPaveText *pave = new TPaveText(0.14, 0.94, 0.94, 0.98,"blNDC");
-    pave->SetBorderSize(0);
-    pave->SetFillColor(0);
-    pave->SetFillStyle(0);
-    pave->SetTextFont(43);
-    pave->SetTextColor(kBlue);
-    pave->SetTextSize(18);
-    pave->AddText((myPtEtaBin.getTitle() + ds).c_str());
-    pave->Draw("same");
-  */
+    simpleCan->Save(outputDir);
+  }
+  
+  TH1F *h_jzb_smeared_ej1_clone = (TH1F*)h_jzb_smeared_ej1->Clone();
+  TH1F *h_jzb_true_ej1_clone = (TH1F*)h_jzb_true_ej1->Clone();
+  normHist(h_jzb_smeared_ej1_clone);
+  normHist(h_jzb_true_ej1_clone);
+
+  h_jzb_smeared_ej1_clone ->SetLineColor(kRed);
+
+  {
+    string plotTitle     = "ej1_smeared_closure";
+    SimpleCanvas *simpleCan = new SimpleCanvas(plotTitle, 2);
+    simpleCan->Up();
+    simpleCan->ShapeMeUp(h_jzb_true_ej1_clone);
+    simpleCan->ShapeMeUp(h_jzb_smeared_ej1_clone);
+    h_jzb_true_ej1_clone->DrawNormalized("e1");
+    h_jzb_smeared_ej1_clone->DrawNormalized("hist same");
+    simpleCan->SetLogy();
+    simpleCan->Dw();
+    TH1F *hratio = doRatio(h_jzb_smeared_ej1_clone, h_jzb_true_ej1_clone);
+    simpleCan->ShapeMeDw(hratio);
+    hratio->GetYaxis()->SetTitle("pred. / true");
+    hratio->Draw("e1");
+    hratio->GetYaxis()->SetRangeUser(0.0, 2.0);
+    hratio->GetYaxis()->SetNdivisions(507);
     simpleCan->Save(outputDir);
   }
 
-  // or make a chain in SimpleDriver.h ?
-  // would need to map the branches to local variables
-  for(size_t iSample = 0; iSample < myDriver.size(); ++iSample)
-  {
-    cout << "iSample = " << iSample << endl;
-  }
+  
 
-/*
-  fp_in_local      = new TFile ( filename_in.c_str()  ,  "OPEN");
-  events_in  = (TTree*)fp_in_local->Get("demo/events");
-  init();
- 
-  cout << "my filename is " << filename_in.c_str() << endl;
-  for (ULong64_t ii=0; ii<nentries;ii++)
-  {
-    events_in->GetEntry(ii);
+  
 
-  }
-*/
 
 }
 
