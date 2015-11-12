@@ -248,4 +248,8 @@ TH1F  *ScaleTH1F(TH1F *hist, pnumber scale)
   return newHist;
 }
 
+
+float coolme(float x, float b){return round(x/b)*b;}
+
 #endif
+
